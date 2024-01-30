@@ -1,5 +1,7 @@
 import UIKit
 
+// MARK: - UIButton Extensions
+
 extension UIButton {
     
     func addAnimateAction(effect: some DiscreteSymbolEffect & SymbolEffect, for event: UIControl.Event, _ handler: @escaping () -> Void) {

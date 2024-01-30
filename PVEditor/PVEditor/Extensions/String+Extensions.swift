@@ -1,6 +1,8 @@
 import Foundation
 import AVKit
 
+// MARK: - String Extensions
+
 extension String {
     
     static var imageIdentifier: String {

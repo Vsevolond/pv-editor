@@ -104,9 +104,8 @@ extension FeedViewController {
         present(picker, animated: true)
     }
     
-    private func openImageEditor(with image: UIImage) {
-        let imageEditorViewController = ImageEditorViewController()
-        imageEditorViewController.configure(with: image)
+    private func openImageEditor(with imageUrl: URL) {
+        let imageEditorViewController = ImageEditorViewController(imageUrl: imageUrl)
         navigationController?.pushViewController(imageEditorViewController, animated: true)
     }
     
@@ -133,15 +132,10 @@ extension FeedViewController: PHPickerViewControllerDelegate {
                     return
                 }
                 
-                do {
-                    let data = try Data(contentsOf: imageUrl)
-                    if let image = UIImage(data: data) {
-                        DispatchQueue.main.async {
-                            self.openImageEditor(with: image)
-                        }
-                    }
-                } catch {
-                    print(error)
+                let tempUrl = FileManager.default.copyFile(at: imageUrl)
+                
+                DispatchQueue.main.async {
+                    self.openImageEditor(with: tempUrl)
                 }
             }
         } else if itemProvider.hasItemConformingToTypeIdentifier(.videoIdentifier) {
@@ -150,15 +144,10 @@ extension FeedViewController: PHPickerViewControllerDelegate {
                     return
                 }
                 
-                let fileName = "fileToUpload.\(videoUrl.pathExtension)"
-                let newURL = URL(fileURLWithPath: NSTemporaryDirectory() + fileName)
-                do {
-                    try FileManager.default.copyItem(at: videoUrl, to: newURL)
-                } catch {
-                    print(error)
-                }
+                let tempUrl = FileManager.default.copyFile(at: videoUrl)
+
                 DispatchQueue.main.async {
-                    self.openVideoEditor(with: newURL)
+                    self.openVideoEditor(with: tempUrl)
                 }
             }
         }
