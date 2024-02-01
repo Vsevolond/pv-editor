@@ -25,6 +25,9 @@
 		D3E5CCE12B6983A400FBE587 /* FilterType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCE02B6983A400FBE587 /* FilterType.swift */; };
 		D3E5CCE32B69855700FBE587 /* EditingMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCE22B69855700FBE587 /* EditingMode.swift */; };
 		D3E5CCE52B6A46D500FBE587 /* ImageEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCE42B6A46D500FBE587 /* ImageEditorModel.swift */; };
+		D3E5CCF52B6ADFEF00FBE587 /* SlidingRuler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */; };
+		D3E5CCF72B6B906600FBE587 /* CenteredFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */; };
+		D3E5CCF92B6BD20000FBE587 /* SlidingRulerCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF82B6BD20000FBE587 /* SlidingRulerCollectionCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,6 +51,9 @@
 		D3E5CCE02B6983A400FBE587 /* FilterType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterType.swift; sourceTree = "<group>"; };
 		D3E5CCE22B69855700FBE587 /* EditingMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditingMode.swift; sourceTree = "<group>"; };
 		D3E5CCE42B6A46D500FBE587 /* ImageEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEditorModel.swift; sourceTree = "<group>"; };
+		D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingRuler.swift; sourceTree = "<group>"; };
+		D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenteredFlowLayout.swift; sourceTree = "<group>"; };
+		D3E5CCF82B6BD20000FBE587 /* SlidingRulerCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingRulerCollectionCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,8 @@
 		D38DF5FF2AE1A74900BB15EC /* PVEditor */ = {
 			isa = PBXGroup;
 			children = (
+				D3E5CCF32B6ADFD900FBE587 /* CustomComponents */,
+				D3E5CCEC2B6AD0A200FBE587 /* Entities */,
 				D3E5CCDA2B6971FF00FBE587 /* Cells */,
 				D39E91B02B2900D3006FA3D8 /* VideoEditor */,
 				D39E91AF2B2900C1006FA3D8 /* ImageEditor */,
@@ -160,11 +168,28 @@
 			isa = PBXGroup;
 			children = (
 				D3E5CCDB2B69723700FBE587 /* EditModeCollectionCell.swift */,
+				D3E5CCF82B6BD20000FBE587 /* SlidingRulerCollectionCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
+		D3E5CCEC2B6AD0A200FBE587 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
 				D3E5CCDE2B6982F300FBE587 /* CorrectionType.swift */,
 				D3E5CCE02B6983A400FBE587 /* FilterType.swift */,
 				D3E5CCE22B69855700FBE587 /* EditingMode.swift */,
 			);
-			path = Cells;
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		D3E5CCF32B6ADFD900FBE587 /* CustomComponents */ = {
+			isa = PBXGroup;
+			children = (
+				D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */,
+				D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */,
+			);
+			path = CustomComponents;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -183,6 +208,8 @@
 			dependencies = (
 			);
 			name = PVEditor;
+			packageProductDependencies = (
+			);
 			productName = PVEditor;
 			productReference = D38DF5FD2AE1A74900BB15EC /* PVEditor.app */;
 			productType = "com.apple.product-type.application";
@@ -211,6 +238,8 @@
 				Base,
 			);
 			mainGroup = D38DF5F42AE1A74900BB15EC;
+			packageReferences = (
+			);
 			productRefGroup = D38DF5FE2AE1A74900BB15EC /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -249,10 +278,13 @@
 				D3E5CCD92B69328900FBE587 /* AppColorSet.swift in Sources */,
 				D39E91B22B2900F9006FA3D8 /* FeedButtonType.swift in Sources */,
 				D3E5CCD72B6931F800FBE587 /* FileManager+Extensions.swift in Sources */,
+				D3E5CCF52B6ADFEF00FBE587 /* SlidingRuler.swift in Sources */,
 				D3E5CCE52B6A46D500FBE587 /* ImageEditorModel.swift in Sources */,
+				D3E5CCF72B6B906600FBE587 /* CenteredFlowLayout.swift in Sources */,
 				D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */,
 				D39E91B42B2A34B0006FA3D8 /* UIColor+Extensions.swift in Sources */,
 				D3E5CCDC2B69723700FBE587 /* EditModeCollectionCell.swift in Sources */,
+				D3E5CCF92B6BD20000FBE587 /* SlidingRulerCollectionCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

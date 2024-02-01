@@ -18,10 +18,13 @@ final class ImageEditorViewController: UIViewController {
     private let changeButton: UIButton = UIButton()
     private let filterButton: UIButton = UIButton()
     
+    private let slider: SlidingRuler = SlidingRuler()
+    
     private let modesCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
+        let layout = CenteredFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = 20
+        layout.minimumLineSpacing = Constants.spaceBetweenCells
+        layout.itemSize = .init(width: Constants.collectionHeight, height: .zero)
         
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.register(EditModeCollectionCell.self, forCellWithReuseIdentifier: Constants.modeCellIdentifier)
@@ -135,6 +138,9 @@ final class ImageEditorViewController: UIViewController {
         
         configureCollectionView()
         view.addSubview(modesCollectionView)
+        
+        configureSlider()
+        view.addSubview(slider)
     }
     
     private func configureImageView() {
@@ -148,6 +154,10 @@ final class ImageEditorViewController: UIViewController {
         modesCollectionView.dataSource = self
         modesCollectionView.backgroundColor = .clear
         modesCollectionView.frame = .init(x: 0, y: imageView.frame.maxY, width: view.bounds.width, height: Constants.collectionHeight)
+    }
+    
+    private func configureSlider() {
+        slider.frame = .init(x: 0, y: modesCollectionView.frame.maxY, width: view.bounds.width, height: Constants.sliderHeight)
     }
 }
 
@@ -189,7 +199,7 @@ extension ImageEditorViewController: UICollectionViewDelegate, UICollectionViewD
 extension ImageEditorViewController: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return .init(width: collectionView.bounds.height, height: collectionView.bounds.height)
+        return .init(width: Constants.collectionHeight, height: Constants.collectionHeight)
     }
 }
 
@@ -212,4 +222,7 @@ private enum Constants {
     
     static let modeCellIdentifier: String = "EditModeCollectionCell"
     static let collectionHeight: CGFloat = 50
+    static let spaceBetweenCells: CGFloat = 20
+    
+    static let sliderHeight: CGFloat = 30
 }
