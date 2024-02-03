@@ -11,6 +11,17 @@ enum CorrectionType: CaseIterable {
     case sharpness
     case clearness
     case blur
+    
+    var range: ClosedRange<Int> {
+        switch self {
+            
+        case .contrast, .brightness, .saturation, .warmness:
+            return Constants.fullRange
+            
+        case .sharpness, .clearness, .blur:
+            return Constants.halfRange
+        }
+    }
 }
 
 // MARK: - Extension
@@ -41,13 +52,13 @@ extension CorrectionType: EditModeProtocol {
 
 private enum Constants {
     
-    static let contrastTitle: String = "Контраст"
-    static let brightnessTitle: String = "Яркость"
-    static let saturationTitle: String = "Насыщенность"
-    static let warmnessTitle: String = "Теплота"
-    static let sharpnessTitle: String = "Резкость"
-    static let clearnessTitle: String = "Четкость"
-    static let blurTitle: String = "Размытие"
+    static let contrastTitle: String = "КОНТРАСТ"
+    static let brightnessTitle: String = "ЯРКОСТЬ"
+    static let saturationTitle: String = "НАСЫЩЕННОСТЬ"
+    static let warmnessTitle: String = "ТЕПЛОТА"
+    static let sharpnessTitle: String = "РЕЗКОСТЬ"
+    static let clearnessTitle: String = "ЧЕТКОСТЬ"
+    static let blurTitle: String = "РАЗМЫТИЕ"
     
     static let titles: [String] = [
         contrastTitle,
@@ -76,4 +87,7 @@ private enum Constants {
         clearnessImage,
         blurImage
     ]
+    
+    static let fullRange: ClosedRange<Int> = -100...100
+    static let halfRange: ClosedRange<Int> = 0...100
 }

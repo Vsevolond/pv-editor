@@ -7,7 +7,10 @@ final class SlidingRuler: UIView {
     // MARK: - Internal Properties
     
     var range: ClosedRange<Int> = -100...100
-    var step: Int = 10
+    
+    var value: Int = 0
+    
+    var onValueChanged: (() -> Void)?
     
     // MARK: - Private Properties
     
@@ -46,6 +49,12 @@ final class SlidingRuler: UIView {
         addSubview(collectionView)
         
         drawCenter()
+        selectCenter(animated: false)
+    }
+    
+    func flush() {
+        value = 0
+        selectCenter(animated: true)
     }
     
     // MARK: - Private Methods
@@ -80,6 +89,24 @@ final class SlidingRuler: UIView {
         collectionView.dataSource = self
         collectionView.backgroundColor = .clear
     }
+    
+    private func updateValue() {
+        let centerPoint = CGPoint(x: collectionView.bounds.midX, y: collectionView.bounds.midY)
+        if let centerIndexPath = collectionView.indexPathForItem(at: centerPoint) {
+            
+            let newValue = range.lowerBound + centerIndexPath.row
+            if value != newValue {
+
+                value = newValue
+                onValueChanged?()
+            }
+        }
+    }
+    
+    private func selectCenter(animated: Bool) {
+        let position: Int = range.lowerBound < 0 ? -range.lowerBound : 0
+        collectionView.selectItem(at: .init(row: position, section: 0), animated: animated, scrollPosition: .centeredHorizontally)
+    }
 }
 
 // MARK: - Extensions
@@ -98,6 +125,10 @@ extension SlidingRuler: UICollectionViewDelegate, UICollectionViewDataSource {
         }
         
         return cell
+    }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateValue()
     }
 }
 

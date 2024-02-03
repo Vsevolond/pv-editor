@@ -15,8 +15,7 @@ final class ImageEditorViewController: UIViewController {
     private let nextButton: UIButton = UIButton()
     private let modeTitle: UILabel = UILabel()
     
-    private let changeButton: UIButton = UIButton()
-    private let filterButton: UIButton = UIButton()
+    private let modeSegmentedControl: UISegmentedControl = UISegmentedControl(items: EditingMode.titles)
     
     private let slider: SlidingRuler = SlidingRuler()
     
@@ -34,32 +33,36 @@ final class ImageEditorViewController: UIViewController {
         return collectionView
     }()
     
-    private var cancelAction: UIAction {
-        return UIAction { action in
-            self.navigationController?.popViewController(animated: true)
-        }
+    private lazy var cancelAction: UIAction = UIAction { action in
+        self.navigationController?.popViewController(animated: true)
     }
     
-    private var saveAction: UIAction {
-        return UIAction(title: Constants.saveTitle, image: Constants.saveImage) { action in
-            
-        }
+    private var saveAction: UIAction = UIAction(title: Constants.saveTitle, image: Constants.saveImage) { _ in
+        
     }
     
-    private var sendAction: UIAction {
-        return UIAction(title: Constants.sendTitle, image: Constants.sendImage) { action in
-            
-        }
+    private var sendAction: UIAction = UIAction(title: Constants.sendTitle, image: Constants.sendImage) { _ in
+        
     }
     
-    private var convertAction: UIAction {
-        return UIAction(title: Constants.convertTitle, image: Constants.convertImage) { action in
-            
-        }
+    private var convertAction: UIAction = UIAction(title: Constants.convertTitle, image: Constants.convertImage) { _ in
+        
     }
     
     private var doneActions: [UIAction] {
         [saveAction, sendAction, convertAction]
+    }
+    
+    private lazy var modeChangedAction: UIAction = UIAction { _ in
+        let index = self.modeSegmentedControl.selectedSegmentIndex
+        self.model.didChangedMode(to: index)
+    }
+    
+    private var lastStepAction: UIAction = UIAction { _ in
+        
+    }
+    
+    private var nextStepAction: UIAction = UIAction { _ in
     }
     
     // MARK: - Initializers
@@ -97,6 +100,8 @@ final class ImageEditorViewController: UIViewController {
     // MARK: - Private Methods
     
     private func setupNavBar() {
+        navigationController?.navigationBar.prefersLargeTitles = false
+        
         let leftButton = makeBarButton(
             title: Constants.cancelTitle,
             titleColor: .appColor(.darkPurple),
@@ -132,6 +137,16 @@ final class ImageEditorViewController: UIViewController {
     
     private func setup() {
         view.backgroundColor = .black
+        model.viewController = self
+        
+        configureLastButton()
+        view.addSubview(lastButton)
+        
+        configureNextButton()
+        view.addSubview(nextButton)
+        
+        configureModeTitle()
+        view.addSubview(modeTitle)
         
         configureImageView()
         view.addSubview(imageView)
@@ -141,23 +156,92 @@ final class ImageEditorViewController: UIViewController {
         
         configureSlider()
         view.addSubview(slider)
+        
+        configureSegmentedControl()
+        view.addSubview(modeSegmentedControl)
+    }
+    
+    private func configureLastButton() {
+        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
+        lastButton.frame = .init(
+            x: 10,
+            y: navigationBarMaxY + Constants.padding,
+            width: Constants.stepControlButtonSize + 2,
+            height: Constants.stepControlButtonSize
+        )
+        lastButton.setBackgroundImage(Constants.lastImage, for: .normal)
+        lastButton.tintColor = .white
+        lastButton.isEnabled = false
+        lastButton.addAction(lastStepAction, for: .touchUpInside)
+    }
+    
+    private func configureNextButton() {
+        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
+        nextButton.frame = .init(
+            x: lastButton.frame.maxX + Constants.padding,
+            y: navigationBarMaxY + Constants.padding,
+            width: Constants.stepControlButtonSize + 2,
+            height: Constants.stepControlButtonSize
+        )
+        nextButton.setBackgroundImage(Constants.nextImage, for: .normal)
+        nextButton.tintColor = .white
+        nextButton.isEnabled = false
+        nextButton.addAction(nextStepAction, for: .touchUpInside)
+    }
+    
+    private func configureModeTitle() {
+        modeTitle.frame.size = .init(width: (view.center.x - nextButton.frame.maxX) * 2, height: 50)
+        modeTitle.center = .init(x: view.center.x, y: nextButton.center.y)
+        modeTitle.text = model.currentMode.title
+        modeTitle.textAlignment = .center
+        modeTitle.font = .boldSystemFont(ofSize: 16)
+        modeTitle.textColor = .appColor(.frenchGray)
     }
     
     private func configureImageView() {
-        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
-        imageView.frame = .init(x: 0, y: navigationBarMaxY, width: view.bounds.width, height: view.bounds.width)
+        imageView.frame = .init(
+            x: 0,
+            y: lastButton.frame.maxY + Constants.padding,
+            width: view.bounds.width,
+            height: view.bounds.width
+        )
         imageView.contentMode = .scaleAspectFit
+        imageView.backgroundColor = .gray.withAlphaComponent(0.1)
     }
     
     private func configureCollectionView() {
         modesCollectionView.delegate = self
         modesCollectionView.dataSource = self
         modesCollectionView.backgroundColor = .clear
-        modesCollectionView.frame = .init(x: 0, y: imageView.frame.maxY, width: view.bounds.width, height: Constants.collectionHeight)
+        modesCollectionView.frame = .init(
+            x: 0,
+            y: imageView.frame.maxY + Constants.padding,
+            width: view.bounds.width,
+            height: Constants.collectionHeight
+        )
     }
     
     private func configureSlider() {
-        slider.frame = .init(x: 0, y: modesCollectionView.frame.maxY, width: view.bounds.width, height: Constants.sliderHeight)
+        slider.frame = .init(
+            x: 0,
+            y: modesCollectionView.frame.maxY + Constants.padding,
+            width: view.bounds.width,
+            height: Constants.sliderHeight
+        )
+    }
+    
+    private func configureSegmentedControl() {
+        modeSegmentedControl.frame = .init(
+            x: view.bounds.midX - Constants.segmentedControlWidth / 2,
+            y: view.bounds.maxY - Constants.segmentedControlHeight * 2,
+            width: Constants.segmentedControlWidth,
+            height: Constants.segmentedControlHeight
+        )
+        modeSegmentedControl.selectedSegmentIndex = 0
+        modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
+        modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
+        modeSegmentedControl.selectedSegmentTintColor = .appColor(.tropicalIndigo)
+        modeSegmentedControl.addAction(modeChangedAction, for: .valueChanged)
     }
 }
 
@@ -203,6 +287,37 @@ extension ImageEditorViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension ImageEditorViewController: ImageEditorModelProtocol {
+    
+    func flushSlider() {
+        slider.flush()
+    }
+    
+    func hideSlider() {
+        UIView.animate(withDuration: 0.3) {
+            self.slider.alpha = 0
+        } completion: { _ in
+            self.slider.isHidden = true
+        }
+    }
+    
+    func showSlider() {
+        slider.isHidden = false
+        UIView.animate(withDuration: 0.3) {
+            self.slider.alpha = 1
+        }
+    }
+    
+    func updateModeTitle(text: String) {
+        modeTitle.text = text
+    }
+    
+    func updateCollection() {
+        modesCollectionView.reloadData()
+        modesCollectionView.scrollToItem(at: .init(row: 0, section: 0), at: .centeredHorizontally, animated: true)
+    }
+}
+
 // MARK: - Constants
 
 private enum Constants {
@@ -225,4 +340,14 @@ private enum Constants {
     static let spaceBetweenCells: CGFloat = 20
     
     static let sliderHeight: CGFloat = 30
+    
+    static let segmentedControlWidth: CGFloat = 200
+    static let segmentedControlHeight: CGFloat = 30
+    
+    static let padding: CGFloat = 10
+    
+    static let lastImage: UIImage? = UIImage(systemName: "arrow.uturn.left.circle")
+    static let nextImage: UIImage? = UIImage(systemName: "arrow.uturn.right.circle")
+    
+    static let stepControlButtonSize: CGFloat = 30
 }

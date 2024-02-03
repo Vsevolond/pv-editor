@@ -4,6 +4,8 @@ import UIKit
 
 final class SlidingRulerCollectionCell: UICollectionViewCell {
     
+    // MARK: - Initializers
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -13,6 +15,8 @@ final class SlidingRulerCollectionCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: - Internal Methods
     
     override func draw(_ rect: CGRect) {
         let path = UIBezierPath()

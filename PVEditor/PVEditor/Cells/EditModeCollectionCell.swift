@@ -58,6 +58,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
         imageView.layer.cornerRadius = bounds.height / 2
         
         if isSelected {
+            imageView.layer.borderWidth = 0
             imageView.backgroundColor = .darkGray
         } else {
             imageView.backgroundColor = .clear
@@ -68,12 +69,15 @@ final class EditModeCollectionCell: UICollectionViewCell {
     
     private func setupLikeFilter(type: FilterType) {
         imageView.image = type.image
-        imageView.contentMode = .center
-        imageView.layer.cornerRadius = 2
+        imageView.contentMode = .scaleAspectFit
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
         
         if isSelected {
-            imageView.layer.borderWidth = 2
-            imageView.layer.borderColor = UIColor.white.cgColor
+            imageView.layer.borderWidth = 3
+            imageView.layer.borderColor = UIColor.appColor(.linen).cgColor
+        } else {
+            imageView.layer.borderWidth = 0
         }
     }
 }

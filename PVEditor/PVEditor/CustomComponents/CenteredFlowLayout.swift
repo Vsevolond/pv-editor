@@ -14,6 +14,9 @@ final class CenteredFlowLayout: UICollectionViewFlowLayout {
         collectionView?.numberOfItems(inSection: 0) ?? 0
     }
     
+    var topInset: CGFloat = .zero
+    var bottomInset: CGFloat = .zero
+    
     var farInset: CGFloat {
         guard let collectionView else { return .zero }
         
@@ -21,7 +24,7 @@ final class CenteredFlowLayout: UICollectionViewFlowLayout {
     }
     
     var insets: UIEdgeInsets {
-        UIEdgeInsets(top: .zero, left: farInset, bottom: .zero, right: farInset)
+        UIEdgeInsets(top: topInset, left: farInset, bottom: bottomInset, right: farInset)
     }
     
     // MARK: - Internal Methods

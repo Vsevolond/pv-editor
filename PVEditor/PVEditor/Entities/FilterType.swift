@@ -38,10 +38,10 @@ extension FilterType: EditModeProtocol {
 
 private enum Constants {
     
-    static let sepiaTitle: String = "Сепия"
-    static let blackWhiteTitle: String = "Черно-белый"
-    static let vintageTitle: String = "Винтаж"
-    static let negativeTitle: String = "Негатив"
+    static let sepiaTitle: String = "СЕПИЯ"
+    static let blackWhiteTitle: String = "ЧЕРНО-БЕЛЫЙ"
+    static let vintageTitle: String = "ВИНТАЖ"
+    static let negativeTitle: String = "НЕГАТИВ"
     
     static let titles: [String] = [
         sepiaTitle,

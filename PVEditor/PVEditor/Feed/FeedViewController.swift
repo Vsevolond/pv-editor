@@ -16,12 +16,16 @@ final class FeedViewController: UIViewController {
         super.viewDidLoad()
         setup()
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupTitle()
+    }
 
     // MARK: - Private Methods
 
     private func setup() {
         setupGradient()
-        setupTitle()
         setupStackView()
         setupButton(type: .video, button: &videoButton)
         setupButton(type: .photo, button: &photoButton)
