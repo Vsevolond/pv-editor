@@ -9,6 +9,7 @@ protocol ImageEditorModelProtocol: AnyObject {
     func hideSlider()
     func showSlider()
     func flushSlider(to value: Int)
+    func updateSlider(with range: ClosedRange<Int>)
     func setValue(value: Int)
     func hideValue()
 }
@@ -27,13 +28,13 @@ final class ImageEditorModel {
         modes[currentIndexMode]
     }
     
-    var imageParameters: ImageParameters
-    
     var image: UIImage {
         imageParameters.image
     }
     
     // MARK: - Private Properties
+    
+    private var imageParameters: ImageParameters
     
     private var imageUrl: URL {
         imageParameters.imageUrl
@@ -63,6 +64,7 @@ final class ImageEditorModel {
         if case .correction(let type) = currentMode {
             let value = imageParameters.getValue(of: type)
             
+            viewController?.updateSlider(with: type.range)
             viewController?.flushSlider(to: value)
             viewController?.setValue(value: value)
         }

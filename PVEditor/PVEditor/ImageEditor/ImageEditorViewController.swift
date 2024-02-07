@@ -298,6 +298,10 @@ extension ImageEditorViewController: UICollectionViewDelegateFlowLayout {
 
 extension ImageEditorViewController: ImageEditorModelProtocol {
     
+    func updateSlider(with range: ClosedRange<Int>) {
+        slider.range = range
+    }
+    
     func hideValue() {
         UIView.animate(withDuration: 0.3) {
             self.valueLabel.alpha = 0

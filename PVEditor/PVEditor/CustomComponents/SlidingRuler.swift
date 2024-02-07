@@ -67,10 +67,10 @@ final class SlidingRuler: UIView {
     }
     
     func flush(to index: Int) {
+        selectItem(at: index, animated: true)
+        
         if index == value {
             actionAfterEndScrolling?()
-        } else {
-            selectItem(at: index, animated: true)
         }
     }
     
