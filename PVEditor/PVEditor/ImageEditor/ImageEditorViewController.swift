@@ -81,10 +81,6 @@ final class ImageEditorViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    deinit {
-        try? FileManager.default.removeItem(at: model.imageUrl)
-    }
-    
     // MARK: - Internal Methods
     
     override func viewDidLoad() {

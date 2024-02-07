@@ -33,7 +33,9 @@ final class ImageEditorModel {
         imageParameters.image
     }
     
-    var imageUrl: URL {
+    // MARK: - Private Properties
+    
+    private var imageUrl: URL {
         imageParameters.imageUrl
     }
     
@@ -42,6 +44,10 @@ final class ImageEditorModel {
     init(imageUrl: URL) throws {
         modes = CorrectionType.allCases.map { .correction($0) }
         imageParameters = try ImageParameters(imageUrl: imageUrl)
+    }
+    
+    deinit {
+        try? FileManager.default.removeItem(at: imageUrl)
     }
     
     // MARK: - Internal Methods
