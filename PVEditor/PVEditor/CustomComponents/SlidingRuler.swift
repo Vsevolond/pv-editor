@@ -6,11 +6,25 @@ final class SlidingRuler: UIView {
     
     // MARK: - Internal Properties
     
-    var range: ClosedRange<Int> = -100...100
-    
     var value: Int = 0
     
-    var onValueChanged: (() -> Void)?
+    var onValueChanged: ((Int) -> Void)?
+    
+    var actionAfterEndScrolling: (() -> Void)?
+    
+    var actionAfterEndDecelerating: (() -> Void)?
+    
+    var range: ClosedRange<Int> = -100...100 {
+        didSet {
+            collectionView.reloadData()
+        }
+    }
+    
+    var isEnabled: Bool = true {
+        didSet {
+            collectionView.isUserInteractionEnabled = isEnabled
+        }
+    }
     
     // MARK: - Private Properties
     
@@ -49,12 +63,23 @@ final class SlidingRuler: UIView {
         addSubview(collectionView)
         
         drawCenter()
-        selectCenter(animated: false)
+        selectItem(at: 0, animated: false)
     }
     
-    func flush() {
-        value = 0
-        selectCenter(animated: true)
+    func flush(to index: Int) {
+        if index == value {
+            actionAfterEndScrolling?()
+        } else {
+            selectItem(at: index, animated: true)
+        }
+    }
+    
+    func doAfterEndScrolling(_ completion: @escaping () -> Void) {
+        actionAfterEndScrolling = completion
+    }
+    
+    func doAfterEndDecelerating(_ completion: @escaping () -> Void) {
+        actionAfterEndDecelerating = completion
     }
     
     // MARK: - Private Methods
@@ -98,14 +123,17 @@ final class SlidingRuler: UIView {
             if value != newValue {
 
                 value = newValue
-                onValueChanged?()
+                
+                if isEnabled {
+                    onValueChanged?(value)
+                }
             }
         }
     }
     
-    private func selectCenter(animated: Bool) {
-        let position: Int = range.lowerBound < 0 ? -range.lowerBound : 0
-        collectionView.selectItem(at: .init(row: position, section: 0), animated: animated, scrollPosition: .centeredHorizontally)
+    private func selectItem(at index: Int, animated: Bool) {
+        let indexPath = IndexPath(row: -range.lowerBound + index, section: 0)
+        collectionView.selectItem(at: indexPath, animated: animated, scrollPosition: .centeredHorizontally)
     }
 }
 
@@ -129,6 +157,16 @@ extension SlidingRuler: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateValue()
+    }
+    
+    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
+        actionAfterEndScrolling?()
+        actionAfterEndScrolling = nil
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        actionAfterEndDecelerating?()
+        actionAfterEndDecelerating = nil
     }
 }
 

@@ -7,6 +7,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
     // MARK: - Private Properties
     
     private let imageView: UIImageView = UIImageView()
+    private let valueLabel: UILabel = UILabel()
     
     // MARK: - Initializers
     
@@ -26,9 +27,13 @@ final class EditModeCollectionCell: UICollectionViewCell {
         super.prepareForReuse()
         
         imageView.image = nil
+        valueLabel.text = nil
     }
     
     func configure(with mode: EditingMode) {
+        valueLabel.isHidden = true
+        imageView.isHidden = false
+        
         switch mode {
             
         case .correction(let type):
@@ -46,6 +51,9 @@ final class EditModeCollectionCell: UICollectionViewCell {
     
     private func setup() {
         backgroundColor = .clear
+        
+        valueLabel.frame = bounds
+        addSubview(valueLabel)
         
         imageView.frame = bounds
         addSubview(imageView)

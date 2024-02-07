@@ -6,10 +6,9 @@ final class ImageEditorViewController: UIViewController {
     
     // MARK: - Private Properties
     
-    private let model: ImageEditorModel = ImageEditorModel()
+    private let model: ImageEditorModel
     
     private let imageView: UIImageView = UIImageView()
-    private let imageUrl: URL
     
     private let lastButton: UIButton = UIButton()
     private let nextButton: UIButton = UIButton()
@@ -18,6 +17,7 @@ final class ImageEditorViewController: UIViewController {
     private let modeSegmentedControl: UISegmentedControl = UISegmentedControl(items: EditingMode.titles)
     
     private let slider: SlidingRuler = SlidingRuler()
+    private let valueLabel: UILabel = UILabel()
     
     private let modesCollectionView: UICollectionView = {
         let layout = CenteredFlowLayout()
@@ -68,14 +68,10 @@ final class ImageEditorViewController: UIViewController {
     // MARK: - Initializers
     
     init(imageUrl: URL) {
-        if let data = try? Data(contentsOf: imageUrl),
-           let image = UIImage(data: data)
-        {
-            self.imageUrl = imageUrl
-            self.imageView.image = image
-
-        } else {
-            fatalError("can't load image")
+        do {
+            self.model = try ImageEditorModel(imageUrl: imageUrl)
+        } catch {
+            fatalError("image can't be loaded")
         }
         
         super.init(nibName: nil, bundle: nil)
@@ -86,7 +82,7 @@ final class ImageEditorViewController: UIViewController {
     }
     
     deinit {
-        try? FileManager.default.removeItem(at: imageUrl)
+        try? FileManager.default.removeItem(at: model.imageUrl)
     }
     
     // MARK: - Internal Methods
@@ -151,6 +147,9 @@ final class ImageEditorViewController: UIViewController {
         configureImageView()
         view.addSubview(imageView)
         
+        configureValueLabel()
+        view.addSubview(valueLabel)
+        
         configureCollectionView()
         view.addSubview(modesCollectionView)
         
@@ -199,6 +198,7 @@ final class ImageEditorViewController: UIViewController {
     }
     
     private func configureImageView() {
+        imageView.image = model.image
         imageView.frame = .init(
             x: 0,
             y: lastButton.frame.maxY + Constants.padding,
@@ -207,6 +207,18 @@ final class ImageEditorViewController: UIViewController {
         )
         imageView.contentMode = .scaleAspectFit
         imageView.backgroundColor = .gray.withAlphaComponent(0.1)
+    }
+    
+    private func configureValueLabel() {
+        valueLabel.frame.size = .init(width: Constants.valueWidth, height: Constants.valueHeight)
+        valueLabel.center = .init(x: imageView.center.x, y: imageView.frame.maxY - Constants.valueHeight / 2 - Constants.padding)
+        valueLabel.layer.cornerRadius = Constants.valueHeight / 2
+        valueLabel.clipsToBounds = true
+        valueLabel.textAlignment = .center
+        valueLabel.textColor = .white
+        valueLabel.backgroundColor = .appColor(.amethyst)
+        valueLabel.font = .boldSystemFont(ofSize: 16)
+        valueLabel.isHidden = true
     }
     
     private func configureCollectionView() {
@@ -228,6 +240,7 @@ final class ImageEditorViewController: UIViewController {
             width: view.bounds.width,
             height: Constants.sliderHeight
         )
+        slider.onValueChanged = model.didChangedValue(_:)
     }
     
     private func configureSegmentedControl() {
@@ -289,8 +302,30 @@ extension ImageEditorViewController: UICollectionViewDelegateFlowLayout {
 
 extension ImageEditorViewController: ImageEditorModelProtocol {
     
-    func flushSlider() {
-        slider.flush()
+    func hideValue() {
+        UIView.animate(withDuration: 0.3) {
+            self.valueLabel.alpha = 0
+        } completion: { _ in
+            self.valueLabel.isHidden = true
+        }
+    }
+    
+    func setValue(value: Int) {
+        valueLabel.text = "\(value)"
+        valueLabel.alpha = 1
+        valueLabel.isHidden = false
+        
+        slider.doAfterEndDecelerating { [weak self] in
+            self?.hideValue()
+        }
+    }
+    
+    func flushSlider(to value: Int) {
+        slider.isEnabled = false
+        slider.doAfterEndScrolling { [weak self] in
+            self?.slider.isEnabled = true
+        }
+        slider.flush(to: value)
     }
     
     func hideSlider() {
@@ -350,4 +385,7 @@ private enum Constants {
     static let nextImage: UIImage? = UIImage(systemName: "arrow.uturn.right.circle")
     
     static let stepControlButtonSize: CGFloat = 30
+    
+    static let valueWidth: CGFloat = 50
+    static let valueHeight: CGFloat = 30
 }

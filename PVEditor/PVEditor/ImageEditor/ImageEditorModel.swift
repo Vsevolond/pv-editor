@@ -8,7 +8,9 @@ protocol ImageEditorModelProtocol: AnyObject {
     func updateCollection()
     func hideSlider()
     func showSlider()
-    func flushSlider()
+    func flushSlider(to value: Int)
+    func setValue(value: Int)
+    func hideValue()
 }
 
 // MARK: - Image Editor Model
@@ -20,37 +22,74 @@ final class ImageEditorModel {
     var viewController: ImageEditorModelProtocol?
     
     var modes: [EditingMode]
-    var currentMode: EditingMode
+    var currentIndexMode: Int = 0
+    var currentMode: EditingMode {
+        modes[currentIndexMode]
+    }
     
-    // MARK: - Private Properties
+    var imageParameters: ImageParameters
+    
+    var image: UIImage {
+        imageParameters.image
+    }
+    
+    var imageUrl: URL {
+        imageParameters.imageUrl
+    }
     
     // MARK: - Initializers
     
-    init() {
+    init(imageUrl: URL) throws {
         modes = CorrectionType.allCases.map { .correction($0) }
-        currentMode = modes.first ?? .none
+        imageParameters = try ImageParameters(imageUrl: imageUrl)
     }
     
     // MARK: - Internal Methods
     
-    func didSelectMode(at index: Int) {
-        currentMode = modes[index]
-        viewController?.flushSlider()
+    func didSelectMode(at index: Int) { // for correction and filter modes
+        guard currentIndexMode != index else {
+            viewController?.hideValue()
+            return
+        }
+        
+        currentIndexMode = index
+        
+        if case .correction(let type) = currentMode {
+            let value = imageParameters.getValue(of: type)
+            
+            viewController?.flushSlider(to: value)
+            viewController?.setValue(value: value)
+        }
         viewController?.updateModeTitle(text: currentMode.title)
     }
     
-    func didChangedMode(to index: Int) {
+    func didChangedMode(to index: Int) { // correction or filter mode
         if index == 0 {
             modes = CorrectionType.allCases.map { .correction($0) }
-            currentMode = modes.first ?? .none
             viewController?.showSlider()
+            
         } else if index == 1 {
             modes = FilterType.allCases.map { .filter($0) }
-            currentMode = modes.first ?? .none
             viewController?.hideSlider()
+            viewController?.hideValue()
         }
         
+        didSelectMode(at: 0)
         viewController?.updateCollection()
-        viewController?.updateModeTitle(text: currentMode.title)
+    }
+    
+    func didChangedValue(_ value: Int) {
+        switch currentMode {
+            
+        case .correction(let type):
+            imageParameters.setCorrection(of: type, to: value)
+            
+        case .filter(let type):
+            imageParameters.setFilter(type: type)
+            
+        case .none:
+            return
+        }
+        viewController?.setValue(value: value)
     }
 }

@@ -28,6 +28,7 @@
 		D3E5CCF52B6ADFEF00FBE587 /* SlidingRuler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */; };
 		D3E5CCF72B6B906600FBE587 /* CenteredFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */; };
 		D3E5CCF92B6BD20000FBE587 /* SlidingRulerCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCF82B6BD20000FBE587 /* SlidingRulerCollectionCell.swift */; };
+		D3E5CCFB2B6E8CB500FBE587 /* ImageParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +55,7 @@
 		D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingRuler.swift; sourceTree = "<group>"; };
 		D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CenteredFlowLayout.swift; sourceTree = "<group>"; };
 		D3E5CCF82B6BD20000FBE587 /* SlidingRulerCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingRulerCollectionCell.swift; sourceTree = "<group>"; };
+		D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageParameters.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +154,7 @@
 			children = (
 				D3C3D99F2AF2E498008A633E /* ImageEditorViewController.swift */,
 				D3E5CCE42B6A46D500FBE587 /* ImageEditorModel.swift */,
+				D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */,
 			);
 			path = ImageEditor;
 			sourceTree = "<group>";
@@ -285,6 +288,7 @@
 				D39E91B42B2A34B0006FA3D8 /* UIColor+Extensions.swift in Sources */,
 				D3E5CCDC2B69723700FBE587 /* EditModeCollectionCell.swift in Sources */,
 				D3E5CCF92B6BD20000FBE587 /* SlidingRulerCollectionCell.swift in Sources */,
+				D3E5CCFB2B6E8CB500FBE587 /* ImageParameters.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
