@@ -83,9 +83,15 @@ final class ImageEditorViewController: UIViewController {
     
     // MARK: - Internal Methods
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setupNavBar()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupNavBar()
+        
         setup()
     }
     
