@@ -5,31 +5,48 @@ final class FeedViewController: UIViewController {
     
     // MARK: - Private Properties
 
-    private let stackView = UIStackView()
-    private var videoButton = UIButton()
-    private var photoButton = UIButton()
-    private var convertButton = UIButton()
+    private let titleLabel: UILabel = UILabel()
+    private let stackView: UIStackView = UIStackView()
+    private var videoButton: UIButton = UIButton()
+    private var photoButton: UIButton = UIButton()
+    private var convertButton: UIButton = UIButton()
     
     // MARK: - Internal Methods
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setup()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        setupTitle()
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        layout()
     }
 
     // MARK: - Private Methods
 
     private func setup() {
         setupGradient()
+        setupTitle()
         setupStackView()
         setupButton(type: .video, button: &videoButton)
         setupButton(type: .photo, button: &photoButton)
         setupButton(type: .convert, button: &convertButton)
+    }
+    
+    private func layout() {
+        titleLabel.frame = .init(x: 10, y: view.safeAreaInsets.top, width: view.bounds.width, height: 40)
+        view.addSubview(titleLabel)
+        
+        stackView.frame.size = .init(width: view.bounds.width - 40, height: Constants.height)
+        stackView.center = view.center
+        view.addSubview(stackView)
+        
+        stackView.addArrangedSubview(videoButton)
+        stackView.addArrangedSubview(photoButton)
+        stackView.addArrangedSubview(convertButton)
     }
     
     private func setupGradient() {
@@ -40,17 +57,16 @@ final class FeedViewController: UIViewController {
     }
     
     private func setupTitle() {
-        navigationController?.navigationBar.prefersLargeTitles = true
-        navigationItem.title = Constants.appName
-        navigationItem.largeTitleDisplayMode = .inline
+        titleLabel.font = .boldSystemFont(ofSize: 40)
+        titleLabel.textColor = .white
+        titleLabel.text = Constants.appName
+        titleLabel.textAlignment = .left
     }
     
     private func setupStackView() {
         stackView.axis = .horizontal
         stackView.alignment = .fill
         stackView.distribution = .fill
-        stackView.frame.size = .init(width: view.bounds.width - 40, height: Constants.height)
-        stackView.center = view.center
         stackView.layer.cornerRadius = Constants.cornerRadius
         stackView.layer.shadowColor = Constants.shadowColor
         stackView.layer.shadowOpacity = Constants.shadowOpacity
@@ -59,7 +75,6 @@ final class FeedViewController: UIViewController {
         stackView.layer.shouldRasterize = true
         stackView.layer.rasterizationScale = UIScreen.main.scale
         stackView.backgroundColor = Constants.stackColor
-        view.addSubview(stackView)
     }
     
     private func setupButton(type: FeedButtonType, button: inout UIButton) {
@@ -91,7 +106,6 @@ final class FeedViewController: UIViewController {
                 self.openGallery(for: .any(of: [.videos, .images]))
             }
         }
-        stackView.addArrangedSubview(button)
     }
 }
 
@@ -110,12 +124,16 @@ extension FeedViewController {
     
     private func openImageEditor(with imageUrl: URL) {
         let imageEditorViewController = ImageEditorViewController(imageUrl: imageUrl)
-        navigationController?.pushViewController(imageEditorViewController, animated: true)
+        imageEditorViewController.modalTransitionStyle = .crossDissolve
+        imageEditorViewController.modalPresentationStyle = .fullScreen
+        present(imageEditorViewController, animated: true)
     }
     
     private func openVideoEditor(with videoUrl: URL) {
         let videoEditorViewController = VideoEditorViewController(videoUrl: videoUrl)
-        navigationController?.pushViewController(videoEditorViewController, animated: true)
+        videoEditorViewController.modalTransitionStyle = .crossDissolve
+        videoEditorViewController.modalPresentationStyle = .fullScreen
+        present(videoEditorViewController, animated: true)
     }
 }
 
@@ -166,7 +184,7 @@ private enum Constants {
     
     static let gradient: [CGColor] = [
         UIColor.appColor(.amethyst).cgColor,
-        UIColor.appColor(.darkPurple).cgColor
+        UIColor.black.cgColor
     ]
     
     // MARK: - Stack
@@ -175,7 +193,7 @@ private enum Constants {
     static let cornerRadius: CGFloat = 20
     static let shadowOpacity: Float = 0.7
     static let shadowRadius: CGFloat = 25
-    static let shadowColor: CGColor = UIColor.appColor(.linen).cgColor
+    static let shadowColor: CGColor = UIColor.white.cgColor
     static let stackColor: UIColor = .clear
     
     // MARK: - Button

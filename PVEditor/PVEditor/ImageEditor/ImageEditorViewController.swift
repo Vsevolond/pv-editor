@@ -4,11 +4,18 @@ import UIKit
 
 final class ImageEditorViewController: UIViewController {
     
+    // MARK: - Internal Properties
+    
+    override var prefersStatusBarHidden: Bool { true }
+    
     // MARK: - Private Properties
     
     private let model: ImageEditorModel
     
     private let imageView: ImageMetalView = ImageMetalView()
+    
+    private var doneButton: UIButton = UIButton()
+    private var cancelButton: UIButton = UIButton()
     
     private let lastButton: UIButton = UIButton()
     private let nextButton: UIButton = UIButton()
@@ -34,7 +41,7 @@ final class ImageEditorViewController: UIViewController {
     }()
     
     private lazy var cancelAction: UIAction = UIAction { action in
-        self.navigationController?.popViewController(animated: true)
+        self.dismiss(animated: true)
     }
     
     private var saveAction: UIAction = UIAction(title: Constants.saveTitle, image: Constants.saveImage) { _ in
@@ -83,40 +90,98 @@ final class ImageEditorViewController: UIViewController {
     
     // MARK: - Internal Methods
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        setupNavBar()
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setup()
     }
     
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        
+        layout()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        imageView.image = model.image
+    }
+    
     // MARK: - Private Methods
     
-    private func setupNavBar() {
-        navigationController?.navigationBar.prefersLargeTitles = false
+    private func setup() {
+        view.backgroundColor = .black
         
-        let leftButton = makeBarButton(
+        configureControlBarButtons()
+        configureLastButton()
+        configureNextButton()
+        configureModeTitle()
+        configureValueLabel()
+        configureCollectionView()
+        configureSegmentedControl()
+        
+        model.viewController = self
+        slider.onValueChanged = model.didChangedValue(_:)
+    }
+    
+    private func layout() {
+        cancelButton.frame = .init(x: Constants.barHorizontalPadding, y: view.frame.minY + Constants.padding * 2,
+                                   width: Constants.barButtonWidth, height: Constants.barButtonHeight)
+        view.addSubview(cancelButton)
+        
+        doneButton.frame = .init(x: view.bounds.width - Constants.barHorizontalPadding - Constants.barButtonWidth,
+                                 y: cancelButton.frame.minY, width: Constants.barButtonWidth, height: Constants.barButtonHeight)
+        view.addSubview(doneButton)
+        
+        lastButton.frame = .init(x: Constants.padding, y: cancelButton.frame.maxY + Constants.padding * 2,
+                                 width: Constants.stepControlButtonSize + 2, height: Constants.stepControlButtonSize)
+        view.addSubview(lastButton)
+        
+        nextButton.frame = .init(x: lastButton.frame.maxX + Constants.padding, y: lastButton.frame.minY,
+                                 width: Constants.stepControlButtonSize + 2, height: Constants.stepControlButtonSize)
+        view.addSubview(nextButton)
+        
+        modeTitle.frame.size = .init(width: (view.center.x - nextButton.frame.maxX) * 2, height: Constants.stepControlButtonSize)
+        modeTitle.center = .init(x: view.center.x, y: nextButton.center.y)
+        view.addSubview(modeTitle)
+        
+        imageView.frame = .init(x: 0, y: modeTitle.frame.maxY + Constants.padding, width: view.bounds.width, height: view.bounds.width * 4/3)
+        view.addSubview(imageView)
+        
+        valueLabel.frame.size = .init(width: Constants.valueWidth, height: Constants.valueHeight)
+        valueLabel.center = .init(x: imageView.center.x, y: imageView.frame.maxY - Constants.valueHeight / 2 - Constants.padding)
+        view.addSubview(valueLabel)
+        
+        modesCollectionView.frame = .init(x: 0, y: imageView.frame.maxY + Constants.padding,
+                                          width: view.bounds.width, height: Constants.collectionHeight)
+        view.addSubview(modesCollectionView)
+        
+        slider.frame = .init(x: 0, y: modesCollectionView.frame.maxY + Constants.padding,
+                             width: view.bounds.width, height: Constants.sliderHeight)
+        view.addSubview(slider)
+        
+        modeSegmentedControl.frame = .init(x: view.bounds.midX - Constants.segmentedControlWidth / 2,
+                                           y: view.bounds.maxY - Constants.segmentedControlHeight * 2,
+                                           width: Constants.segmentedControlWidth, height: Constants.segmentedControlHeight)
+        view.addSubview(modeSegmentedControl)
+    }
+    
+    private func configureControlBarButtons() {
+        cancelButton = makeBarButton(
             title: Constants.cancelTitle,
             titleColor: .appColor(.darkPurple),
             backgroundColor: .appColor(.frenchGray)
         )
-        leftButton.addAction(cancelAction, for: .touchUpInside)
+        cancelButton.addAction(cancelAction, for: .touchUpInside)
         
-        let rightButton = makeBarButton(
+        doneButton = makeBarButton(
             title: Constants.doneTitle,
             titleColor: .appColor(.linen),
             backgroundColor: .appColor(.amethyst)
         )
-        rightButton.showsMenuAsPrimaryAction = true
-        rightButton.menu = .init(children: doneActions)
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftButton)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: rightButton)
+        doneButton.showsMenuAsPrimaryAction = true
+        doneButton.menu = .init(children: doneActions)
     }
     
     private func makeBarButton(title: String, titleColor: UIColor, backgroundColor: UIColor) -> UIButton {
@@ -124,52 +189,17 @@ final class ImageEditorViewController: UIViewController {
         var container = AttributeContainer()
         container.font = Constants.buttonFont
         configuration.attributedTitle = .init(title, attributes: container)
+        configuration.contentInsets = .init(top: 1, leading: 1, bottom: 1, trailing: 1)
         
         let button = UIButton(configuration: configuration)
         button.backgroundColor = backgroundColor
         button.tintColor = titleColor
-        button.layer.cornerRadius = Constants.cornerRadius
+        button.layer.cornerRadius = Constants.barButtonHeight / 2
         
         return button
     }
     
-    private func setup() {
-        view.backgroundColor = .black
-        model.viewController = self
-        
-        configureLastButton()
-        view.addSubview(lastButton)
-        
-        configureNextButton()
-        view.addSubview(nextButton)
-        
-        configureModeTitle()
-        view.addSubview(modeTitle)
-        
-        configureImageView()
-        view.addSubview(imageView)
-        
-        configureValueLabel()
-        view.addSubview(valueLabel)
-        
-        configureCollectionView()
-        view.addSubview(modesCollectionView)
-        
-        configureSlider()
-        view.addSubview(slider)
-        
-        configureSegmentedControl()
-        view.addSubview(modeSegmentedControl)
-    }
-    
     private func configureLastButton() {
-        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
-        lastButton.frame = .init(
-            x: 10,
-            y: navigationBarMaxY + Constants.padding,
-            width: Constants.stepControlButtonSize + 2,
-            height: Constants.stepControlButtonSize
-        )
         lastButton.setBackgroundImage(Constants.lastImage, for: .normal)
         lastButton.tintColor = .white
         lastButton.isEnabled = false
@@ -177,13 +207,6 @@ final class ImageEditorViewController: UIViewController {
     }
     
     private func configureNextButton() {
-        let navigationBarMaxY = navigationController?.navigationBar.frame.maxY ?? 0
-        nextButton.frame = .init(
-            x: lastButton.frame.maxX + Constants.padding,
-            y: navigationBarMaxY + Constants.padding,
-            width: Constants.stepControlButtonSize + 2,
-            height: Constants.stepControlButtonSize
-        )
         nextButton.setBackgroundImage(Constants.nextImage, for: .normal)
         nextButton.tintColor = .white
         nextButton.isEnabled = false
@@ -191,27 +214,13 @@ final class ImageEditorViewController: UIViewController {
     }
     
     private func configureModeTitle() {
-        modeTitle.frame.size = .init(width: (view.center.x - nextButton.frame.maxX) * 2, height: 50)
-        modeTitle.center = .init(x: view.center.x, y: nextButton.center.y)
         modeTitle.text = model.currentMode.title
         modeTitle.textAlignment = .center
         modeTitle.font = .boldSystemFont(ofSize: 16)
         modeTitle.textColor = .appColor(.frenchGray)
     }
     
-    private func configureImageView() {
-        imageView.frame = .init(
-            x: 0,
-            y: lastButton.frame.maxY + Constants.padding,
-            width: view.bounds.width,
-            height: view.bounds.width
-        )
-        imageView.image = model.image
-    }
-    
     private func configureValueLabel() {
-        valueLabel.frame.size = .init(width: Constants.valueWidth, height: Constants.valueHeight)
-        valueLabel.center = .init(x: imageView.center.x, y: imageView.frame.maxY - Constants.valueHeight / 2 - Constants.padding)
         valueLabel.layer.cornerRadius = Constants.valueHeight / 2
         valueLabel.clipsToBounds = true
         valueLabel.textAlignment = .center
@@ -225,31 +234,9 @@ final class ImageEditorViewController: UIViewController {
         modesCollectionView.delegate = self
         modesCollectionView.dataSource = self
         modesCollectionView.backgroundColor = .clear
-        modesCollectionView.frame = .init(
-            x: 0,
-            y: imageView.frame.maxY + Constants.padding,
-            width: view.bounds.width,
-            height: Constants.collectionHeight
-        )
-    }
-    
-    private func configureSlider() {
-        slider.frame = .init(
-            x: 0,
-            y: modesCollectionView.frame.maxY + Constants.padding,
-            width: view.bounds.width,
-            height: Constants.sliderHeight
-        )
-        slider.onValueChanged = model.didChangedValue(_:)
     }
     
     private func configureSegmentedControl() {
-        modeSegmentedControl.frame = .init(
-            x: view.bounds.midX - Constants.segmentedControlWidth / 2,
-            y: view.bounds.maxY - Constants.segmentedControlHeight * 2,
-            width: Constants.segmentedControlWidth,
-            height: Constants.segmentedControlHeight
-        )
         modeSegmentedControl.selectedSegmentIndex = 0
         modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white], for: .normal)
         modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
@@ -375,8 +362,7 @@ private enum Constants {
     static let sendImage: UIImage? = .init(systemName: "paperplane")
     static let convertImage: UIImage? = .init(systemName: "arrow.2.squarepath")
     
-    static let buttonFont: UIFont = .boldSystemFont(ofSize: 15)
-    static let cornerRadius: CGFloat = 15
+    static let buttonFont: UIFont = .boldSystemFont(ofSize: 16)
     
     static let modeCellIdentifier: String = "EditModeCollectionCell"
     static let collectionHeight: CGFloat = 50
@@ -396,4 +382,8 @@ private enum Constants {
     
     static let valueWidth: CGFloat = 50
     static let valueHeight: CGFloat = 30
+    
+    static let barButtonWidth: CGFloat = 70
+    static let barButtonHeight: CGFloat = 30
+    static let barHorizontalPadding: CGFloat = 20
 }
