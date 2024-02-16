@@ -8,7 +8,7 @@ final class ImageEditorViewController: UIViewController {
     
     private let model: ImageEditorModel
     
-    private let imageView: UIImageView = UIImageView()
+    private let imageView: ImageMetalView = ImageMetalView()
     
     private let lastButton: UIButton = UIButton()
     private let nextButton: UIButton = UIButton()
@@ -194,15 +194,13 @@ final class ImageEditorViewController: UIViewController {
     }
     
     private func configureImageView() {
-        imageView.image = model.image
         imageView.frame = .init(
             x: 0,
             y: lastButton.frame.maxY + Constants.padding,
             width: view.bounds.width,
             height: view.bounds.width
         )
-        imageView.contentMode = .scaleAspectFit
-        imageView.backgroundColor = .gray.withAlphaComponent(0.1)
+        imageView.image = model.image
     }
     
     private func configureValueLabel() {
@@ -300,6 +298,10 @@ extension ImageEditorViewController: ImageEditorModelProtocol {
     
     func updateSlider(with range: ClosedRange<Int>) {
         slider.range = range
+    }
+    
+    func updateImage(to image: CIImage) {
+        imageView.image = image
     }
     
     func hideValue() {

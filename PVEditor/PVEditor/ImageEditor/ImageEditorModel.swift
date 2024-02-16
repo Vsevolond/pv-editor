@@ -12,6 +12,7 @@ protocol ImageEditorModelProtocol: AnyObject {
     func updateSlider(with range: ClosedRange<Int>)
     func setValue(value: Int)
     func hideValue()
+    func updateImage(to image: CIImage)
 }
 
 // MARK: - Image Editor Model
@@ -28,7 +29,7 @@ final class ImageEditorModel {
         modes[currentIndexMode]
     }
     
-    var image: UIImage {
+    var image: CIImage {
         imageParameters.image
     }
     
@@ -45,6 +46,13 @@ final class ImageEditorModel {
     init(imageUrl: URL) throws {
         modes = CorrectionType.allCases.map { .correction($0) }
         imageParameters = try ImageParameters(imageUrl: imageUrl)
+        
+        imageParameters.onImageChange { newImage in
+            
+            DispatchQueue.main.async { [weak self] in
+                self?.viewController?.updateImage(to: newImage)
+            }
+        }
     }
     
     deinit {
@@ -99,5 +107,6 @@ final class ImageEditorModel {
             return
         }
         viewController?.setValue(value: value)
+        viewController?.updateImage(to: image)
     }
 }

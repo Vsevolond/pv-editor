@@ -1,4 +1,5 @@
 import UIKit
+import CoreImage
 
 // MARK: - ImageError
 
@@ -9,24 +10,33 @@ enum ImageError: Error {
 
 // MARK: - Image Parameters
 
-struct ImageParameters {
+final class ImageParameters {
     
     // MARK: - Internal Properties
     
-    var image: UIImage
     var imageUrl: URL
+    var image: CIImage {
+        didSet {
+            updateImage?(image)
+        }
+    }
     
     // MARK: - Private Properties
     
-    private var correction: [CorrectionType: Int]
-    private var filter: FilterType? = nil
+    private var correctionValues: [CorrectionType: Int]
+    private var filterType: FilterType? = nil
+    
+    private let queue = DispatchQueue(label: "imageProcessing", qos: .userInteractive)
+    private let imageCreator: ImageCreator
+    
+    private var updateImage: ((CIImage) -> Void)?
     
     // MARK: - Initializers
     
     init(imageUrl: URL) throws {
         self.imageUrl = imageUrl
         if let data = try? Data(contentsOf: imageUrl),
-           let image = UIImage(data: data)
+           let image = CIImage(data: data)
         {
             self.imageUrl = imageUrl
             self.image = image
@@ -35,20 +45,31 @@ struct ImageParameters {
             throw ImageError.cannotLoad
         }
         
-        self.correction = CorrectionType.allCases.reduce(into: [CorrectionType: Int]()) { $0[$1] = 0 }
+        self.correctionValues = CorrectionType.allCases.reduce(into: [CorrectionType: Int]()) { $0[$1] = 0 }
+        self.imageCreator = .init(image: image)
     }
     
     // MARK: - Internal Properties
     
-    mutating func setCorrection(of type: CorrectionType, to value: Int) {
-        correction[type] = value
+    func setCorrection(of type: CorrectionType, to value: Int) {
+        correctionValues[type] = value
+        
+        queue.async { [weak self] in
+            guard let self else { return }
+            let newImage = imageCreator.correct(image: image, by: type, for: value)
+            image = newImage
+        }
     }
     
-    mutating func setFilter(type: FilterType) {
-        self.filter = type
+    func setFilter(type: FilterType) {
+        filterType = type
     }
     
     func getValue(of type: CorrectionType) -> Int {
-        correction[type] ?? 0
+        correctionValues[type] ?? 0
+    }
+    
+    func onImageChange(_ handler: @escaping (CIImage) -> Void) {
+        updateImage = handler
     }
 }

@@ -20,7 +20,7 @@ final class SlidingRuler: UIView {
         }
     }
     
-    var isEnabled: Bool = true {
+    var isEnabled: Bool = false {
         didSet {
             collectionView.isUserInteractionEnabled = isEnabled
         }
@@ -64,6 +64,8 @@ final class SlidingRuler: UIView {
         
         drawCenter()
         selectItem(at: 0, animated: false)
+        
+        isEnabled = true
     }
     
     func flush(to index: Int) {
