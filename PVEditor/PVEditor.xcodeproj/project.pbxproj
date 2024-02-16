@@ -10,6 +10,7 @@
 		D32771D92B7BEB3C0055317A /* ImageCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771D82B7BEB3C0055317A /* ImageCreator.swift */; };
 		D32771DB2B7BFA710055317A /* CorrectionParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771DA2B7BFA710055317A /* CorrectionParameters.swift */; };
 		D35F0CBF2B7F949F00910455 /* ImageMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */; };
+		D35F0CC12B80198A00910455 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */; };
 		D38DF6012AE1A74900BB15EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6002AE1A74900BB15EC /* AppDelegate.swift */; };
 		D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */; };
 		D38DF60A2AE1A74900BB15EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D38DF6092AE1A74900BB15EC /* Assets.xcassets */; };
@@ -38,6 +39,7 @@
 		D32771D82B7BEB3C0055317A /* ImageCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreator.swift; sourceTree = "<group>"; };
 		D32771DA2B7BFA710055317A /* CorrectionParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionParameters.swift; sourceTree = "<group>"; };
 		D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMetalView.swift; sourceTree = "<group>"; };
+		D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		D38DF5FD2AE1A74900BB15EC /* PVEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PVEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38DF6002AE1A74900BB15EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -82,6 +84,7 @@
 				D39E91A22B28FD54006FA3D8 /* UIButton+Extensions.swift */,
 				D39E91B32B2A34B0006FA3D8 /* UIColor+Extensions.swift */,
 				D3E5CCD62B6931F800FBE587 /* FileManager+Extensions.swift */,
+				D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 				D3E5CCD72B6931F800FBE587 /* FileManager+Extensions.swift in Sources */,
 				D3E5CCF52B6ADFEF00FBE587 /* SlidingRuler.swift in Sources */,
 				D32771D92B7BEB3C0055317A /* ImageCreator.swift in Sources */,
+				D35F0CC12B80198A00910455 /* UIImage+Extensions.swift in Sources */,
 				D3E5CCE52B6A46D500FBE587 /* ImageEditorModel.swift in Sources */,
 				D3E5CCF72B6B906600FBE587 /* CenteredFlowLayout.swift in Sources */,
 				D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */,

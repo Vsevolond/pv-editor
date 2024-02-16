@@ -36,10 +36,11 @@ final class ImageParameters {
     init(imageUrl: URL) throws {
         self.imageUrl = imageUrl
         if let data = try? Data(contentsOf: imageUrl),
-           let image = CIImage(data: data)
+           let uiImage = UIImage(data: data),
+           let ciImage = CIImage(image: uiImage)
         {
             self.imageUrl = imageUrl
-            self.image = image
+            self.image = ciImage.oriented(forExifOrientation: Int32(uiImage.cgImagePropertyOrientation.rawValue))
 
         } else {
             throw ImageError.cannotLoad
