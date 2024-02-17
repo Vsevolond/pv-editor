@@ -125,13 +125,13 @@ private enum Constants {
         blurKey
     ]
     
-    static let contrastParams: CorrectionParameters = .init(min: 0.25, max: 2, default: 1)
-    static let brightnessParams: CorrectionParameters = .init(min: -1, max: 1, default: 0)
-    static let saturationParams: CorrectionParameters = .init(min: 0, max: 2, default: 1)
+    static let contrastParams: CorrectionParameters = .init(min: 0.5, max: 1.5, default: 1)
+    static let brightnessParams: CorrectionParameters = .init(min: -0.5, max: 0.5, default: 0)
+    static let saturationParams: CorrectionParameters = .init(min: 0, max: 10, default: 1)
     static let warmnessParams: CorrectionParameters = .init(min: 6500, max: 3000, default: 6500)
     static let coldnessParams: CorrectionParameters = .init(min: 6500, max: 3000, default: 6500)
-    static let sharpnessParams: CorrectionParameters = .init(min: 0.4, max: 1, default: 0.4)
-    static let clearnessParams: CorrectionParameters = .init(min: 0.5, max: 1, default: 0.5)
+    static let sharpnessParams: CorrectionParameters = .init(min: 0.4, max: 10, default: 0.4)
+    static let clearnessParams: CorrectionParameters = .init(min: 0.5, max: 10, default: 0.5)
     static let blurParams: CorrectionParameters = .init(min: 0, max: 100, default: 0)
     
     static let parameters: [CorrectionParameters] = [

@@ -1,6 +1,7 @@
 import UIKit
+import PhotosUI
 
-enum FeedButtonType {
+enum FeedCellType: CaseIterable {
     
     case video
     case photo
@@ -37,13 +38,21 @@ enum FeedButtonType {
         case .convert: return Constants.convertTintColor
         }
     }
+    
+    var filter: PHPickerFilter {
+        switch self {
+        case .video: return .videos
+        case .photo: return .images
+        case .convert: return .any(of: [.videos, .images])
+        }
+    }
 }
 
 private enum Constants {
     
-    static let video: String = "Video"
-    static let photo: String = "Photo"
-    static let convert: String = "Convert"
+    static let video: String = "Видео редактор"
+    static let photo: String = "Фото редактор"
+    static let convert: String = "Преобразовать"
     
     static let videoBackgroundColor: UIColor = .appColor(.darkPurple)
     static let photoBackgroundColor: UIColor = .appColor(.amethyst)

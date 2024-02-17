@@ -4,12 +4,18 @@ import PhotosUI
 final class FeedViewController: UIViewController {
     
     // MARK: - Private Properties
-
-    private let titleLabel: UILabel = UILabel()
-    private let stackView: UIStackView = UIStackView()
-    private var videoButton: UIButton = UIButton()
-    private var photoButton: UIButton = UIButton()
-    private var convertButton: UIButton = UIButton()
+    
+    private let collectionView: UICollectionView = {
+        let layout: UICollectionViewFlowLayout = .init()
+        layout.minimumLineSpacing = 10
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.register(FeedModeCollectionCell.self, forCellWithReuseIdentifier: Constants.modeCellIdentifier)
+        collection.register(FeedCollectionHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+                            withReuseIdentifier: Constants.headerIdentifier)
+        collection.showsVerticalScrollIndicator = false
+        return collection
+    }()
     
     // MARK: - Internal Methods
 
@@ -19,8 +25,8 @@ final class FeedViewController: UIViewController {
         setup()
     }
     
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         
         layout()
     }
@@ -29,24 +35,13 @@ final class FeedViewController: UIViewController {
 
     private func setup() {
         setupGradient()
-        setupTitle()
-        setupStackView()
-        setupButton(type: .video, button: &videoButton)
-        setupButton(type: .photo, button: &photoButton)
-        setupButton(type: .convert, button: &convertButton)
+        setupCollectionView()
     }
     
     private func layout() {
-        titleLabel.frame = .init(x: 10, y: view.safeAreaInsets.top, width: view.bounds.width, height: 40)
-        view.addSubview(titleLabel)
-        
-        stackView.frame.size = .init(width: view.bounds.width - 40, height: Constants.height)
-        stackView.center = view.center
-        view.addSubview(stackView)
-        
-        stackView.addArrangedSubview(videoButton)
-        stackView.addArrangedSubview(photoButton)
-        stackView.addArrangedSubview(convertButton)
+        collectionView.frame = .init(x: 0, y: view.safeAreaInsets.top, width: view.bounds.width, 
+                                     height: view.bounds.height - view.safeAreaInsets.top - view.safeAreaInsets.bottom)
+        view.addSubview(collectionView)
     }
     
     private func setupGradient() {
@@ -56,56 +51,10 @@ final class FeedViewController: UIViewController {
         view.layer.addSublayer(layer)
     }
     
-    private func setupTitle() {
-        titleLabel.font = .boldSystemFont(ofSize: 40)
-        titleLabel.textColor = .white
-        titleLabel.text = Constants.appName
-        titleLabel.textAlignment = .left
-    }
-    
-    private func setupStackView() {
-        stackView.axis = .horizontal
-        stackView.alignment = .fill
-        stackView.distribution = .fill
-        stackView.layer.cornerRadius = Constants.cornerRadius
-        stackView.layer.shadowColor = Constants.shadowColor
-        stackView.layer.shadowOpacity = Constants.shadowOpacity
-        stackView.layer.shadowOffset = .zero
-        stackView.layer.shadowRadius = Constants.shadowRadius
-        stackView.layer.shouldRasterize = true
-        stackView.layer.rasterizationScale = UIScreen.main.scale
-        stackView.backgroundColor = Constants.stackColor
-    }
-    
-    private func setupButton(type: FeedButtonType, button: inout UIButton) {
-        var configuration = UIButton.Configuration.plain()
-        configuration.title = type.title
-        configuration.image = type.image
-        configuration.imagePlacement = .top
-        configuration.imagePadding = Constants.imagePadding
-        configuration.titleTextAttributesTransformer = .init({ attributes in
-            var newAttributes = attributes
-            newAttributes.font = Constants.buttonFont
-            return newAttributes
-        })
-        button.configuration = configuration
-        button.tintColor = type.tintColor
-        button.backgroundColor = type.backgroundColor
-        button.layer.cornerRadius = Constants.cornerRadius
-        switch type {
-        case .video:
-            button.addAnimateAction(effect: .bounce.up, for: .touchUpInside) {
-                self.openGallery(for: .videos)
-            }
-        case .photo:
-            button.addAnimateAction(effect: .bounce.up, for: .touchUpInside) {
-                self.openGallery(for: .images)
-            }
-        case .convert:
-            button.addAnimateAction(effect: .bounce.up, for: .touchUpInside) {
-                self.openGallery(for: .any(of: [.videos, .images]))
-            }
-        }
+    private func setupCollectionView() {
+        collectionView.backgroundColor = .clear
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
 }
 
@@ -113,9 +62,9 @@ final class FeedViewController: UIViewController {
 
 extension FeedViewController {
 
-    private func openGallery(for filter: PHPickerFilter) {
+    private func openGallery(for type: FeedCellType) {
         var configuration = PHPickerConfiguration()
-        configuration.filter = filter
+        configuration.filter = type.filter
         configuration.selectionLimit = 1
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
@@ -176,32 +125,96 @@ extension FeedViewController: PHPickerViewControllerDelegate {
     }
 }
 
+extension FeedViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int { 2 }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if section == 0 {
+            return FeedCellType.allCases.count
+        } else {
+            return 1
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        if indexPath.section == 0 {
+            
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.modeCellIdentifier, 
+                                                                for: indexPath) as? FeedModeCollectionCell
+            else {
+                return .init()
+            }
+            
+            let type: FeedCellType = FeedCellType.allCases[indexPath.row]
+            cell.configure(with: type)
+            
+            return cell
+            
+        } else {
+            return .init()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, 
+                        at indexPath: IndexPath) -> UICollectionReusableView
+    {
+        guard kind == UICollectionView.elementKindSectionHeader,
+              let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: Constants.headerIdentifier, 
+                                                                               for: indexPath) as? FeedCollectionHeaderView
+        else {
+            return .init()
+        }
+        
+        let title = indexPath.section == 0 ? Constants.appName : Constants.recentName
+        headerView.setTitle(title)
+        
+        return headerView
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if indexPath.section == 0 {
+            let type = FeedCellType.allCases[indexPath.row]
+            openGallery(for: type)
+            
+        } else {
+            return
+        }
+    }
+}
+
+extension FeedViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, 
+                        sizeForItemAt indexPath: IndexPath) -> CGSize
+    {
+        if indexPath.section == 0 {
+            return .init(width: collectionView.bounds.width - 20, height: 80)
+            
+        } else {
+            return .zero
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
+                        referenceSizeForHeaderInSection section: Int) -> CGSize
+    {
+        return .init(width: .zero, height: 80)
+    }
+}
+
 // MARK: - Constants
 
 private enum Constants {
-    
-    // MARK: - View
     
     static let gradient: [CGColor] = [
         UIColor.appColor(.amethyst).cgColor,
         UIColor.black.cgColor
     ]
     
-    // MARK: - Stack
-
-    static let height: CGFloat = 200
-    static let cornerRadius: CGFloat = 20
-    static let shadowOpacity: Float = 0.7
-    static let shadowRadius: CGFloat = 25
-    static let shadowColor: CGColor = UIColor.white.cgColor
-    static let stackColor: UIColor = .clear
-    
-    // MARK: - Button
-
-    static let imagePadding: CGFloat = 10
-    static let buttonFont: UIFont = .boldSystemFont(ofSize: 20)
-    
-    // MARK: - Navigation Title
-    
     static let appName: String = "PVEditor"
+    static let recentName: String = "Недавние"
+    
+    static let modeCellIdentifier: String = "FeedModeCollectionCell"
+    static let headerIdentifier: String = "FeedCollectionHeaderView"
 }
