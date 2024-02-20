@@ -109,4 +109,12 @@ final class ImageEditorModel {
         viewController?.setValue(value: value)
         viewController?.updateImage(to: image)
     }
+    
+    func didEndDecelerating() {
+        guard case .correction(let type) = currentMode else {
+            return
+        }
+
+        imageParameters.updateFiltersImage(by: type)
+    }
 }

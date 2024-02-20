@@ -73,4 +73,8 @@ final class ImageParameters {
     func onImageChange(_ handler: @escaping (CIImage) -> Void) {
         updateImage = handler
     }
+    
+    func updateFiltersImage(by type: CorrectionType) {
+        imageCreator.updateImage(image: image, by: type)
+    }
 }

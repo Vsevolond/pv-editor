@@ -11,11 +11,22 @@ struct ImageFilters {
     let blurFilter: CIFilter = .init(name: Constants.blurName)!
     
     init(image: CIImage) {
+        setImage(image)
+    }
+    
+    func setImage(_ image: CIImage) {
         cbsFilter.setValue(image, forKey: kCIInputImageKey)
         tempFilter.setValue(image, forKey: kCIInputImageKey)
         sharpFilter.setValue(image, forKey: kCIInputImageKey)
         clearFilter.setValue(image, forKey: kCIInputImageKey)
         blurFilter.setValue(image, forKey: kCIInputImageKey)
+    }
+    
+    func updateImage(_ image: CIImage, by type: CorrectionType) {
+        let exceptFilter = getFilter(by: type)
+        [cbsFilter, tempFilter, sharpFilter, clearFilter, blurFilter].filter { $0 != exceptFilter }.forEach { filter in
+            filter.setValue(image, forKey: kCIInputImageKey)
+        }
     }
     
     func getFilter(by type: CorrectionType) -> CIFilter {
@@ -47,6 +58,14 @@ final class ImageCreator {
     
     init(image: CIImage) {
         filters = ImageFilters(image: image)
+    }
+    
+    func set(image: CIImage) {
+        filters.setImage(image)
+    }
+    
+    func updateImage(image: CIImage, by type: CorrectionType) {
+        filters.updateImage(image, by: type)
     }
     
     func correct(image: CIImage, by correctionType: CorrectionType, for value: Int) -> CIImage {

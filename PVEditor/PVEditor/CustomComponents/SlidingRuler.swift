@@ -10,8 +10,6 @@ final class SlidingRuler: UIView {
     
     var onValueChanged: ((Int) -> Void)?
     
-    var actionAfterEndScrolling: (() -> Void)?
-    
     var actionAfterEndDecelerating: (() -> Void)?
     
     var range: ClosedRange<Int> = -100...100 {
@@ -22,6 +20,7 @@ final class SlidingRuler: UIView {
     
     var isEnabled: Bool = false {
         didSet {
+            print(isEnabled)
             collectionView.isUserInteractionEnabled = isEnabled
         }
     }
@@ -70,14 +69,6 @@ final class SlidingRuler: UIView {
     
     func flush(to index: Int) {
         selectItem(at: index, animated: true)
-        
-        if index == value {
-            actionAfterEndScrolling?()
-        }
-    }
-    
-    func doAfterEndScrolling(_ completion: @escaping () -> Void) {
-        actionAfterEndScrolling = completion
     }
     
     func doAfterEndDecelerating(_ completion: @escaping () -> Void) {
@@ -126,7 +117,7 @@ final class SlidingRuler: UIView {
 
                 value = newValue
                 
-                if isEnabled {
+                if collectionView.isDragging {
                     onValueChanged?(value)
                 }
             }
@@ -159,11 +150,6 @@ extension SlidingRuler: UICollectionViewDelegate, UICollectionViewDataSource {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         updateValue()
-    }
-    
-    func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
-        actionAfterEndScrolling?()
-        actionAfterEndScrolling = nil
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {

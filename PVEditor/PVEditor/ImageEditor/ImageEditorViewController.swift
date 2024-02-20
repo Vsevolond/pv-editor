@@ -17,8 +17,6 @@ final class ImageEditorViewController: UIViewController {
     private var doneButton: UIButton = UIButton()
     private var cancelButton: UIButton = UIButton()
     
-    private let lastButton: UIButton = UIButton()
-    private let nextButton: UIButton = UIButton()
     private let modeTitle: UILabel = UILabel()
     
     private let modeSegmentedControl: UISegmentedControl = UISegmentedControl(items: EditingMode.titles)
@@ -114,8 +112,6 @@ final class ImageEditorViewController: UIViewController {
         view.backgroundColor = .black
         
         configureControlBarButtons()
-        configureLastButton()
-        configureNextButton()
         configureModeTitle()
         configureValueLabel()
         configureCollectionView()
@@ -134,16 +130,7 @@ final class ImageEditorViewController: UIViewController {
                                  y: cancelButton.frame.minY, width: Constants.barButtonWidth, height: Constants.barButtonHeight)
         view.addSubview(doneButton)
         
-        lastButton.frame = .init(x: Constants.padding, y: cancelButton.frame.maxY + Constants.padding * 2,
-                                 width: Constants.stepControlButtonSize + 2, height: Constants.stepControlButtonSize)
-        view.addSubview(lastButton)
-        
-        nextButton.frame = .init(x: lastButton.frame.maxX + Constants.padding, y: lastButton.frame.minY,
-                                 width: Constants.stepControlButtonSize + 2, height: Constants.stepControlButtonSize)
-        view.addSubview(nextButton)
-        
-        modeTitle.frame.size = .init(width: (view.center.x - nextButton.frame.maxX) * 2, height: Constants.stepControlButtonSize)
-        modeTitle.center = .init(x: view.center.x, y: nextButton.center.y)
+        modeTitle.frame = .init(x: 0, y: cancelButton.frame.maxY + Constants.padding * 2, width: view.bounds.width, height: Constants.modeTitleHeight)
         view.addSubview(modeTitle)
         
         imageView.frame = .init(x: 0, y: modeTitle.frame.maxY + Constants.padding, width: view.bounds.width, height: view.bounds.width * 4/3)
@@ -197,20 +184,6 @@ final class ImageEditorViewController: UIViewController {
         button.layer.cornerRadius = Constants.barButtonHeight / 2
         
         return button
-    }
-    
-    private func configureLastButton() {
-        lastButton.setBackgroundImage(Constants.lastImage, for: .normal)
-        lastButton.tintColor = .white
-        lastButton.isEnabled = false
-        lastButton.addAction(lastStepAction, for: .touchUpInside)
-    }
-    
-    private func configureNextButton() {
-        nextButton.setBackgroundImage(Constants.nextImage, for: .normal)
-        nextButton.tintColor = .white
-        nextButton.isEnabled = false
-        nextButton.addAction(nextStepAction, for: .touchUpInside)
     }
     
     private func configureModeTitle() {
@@ -312,14 +285,11 @@ extension ImageEditorViewController: ImageEditorModelProtocol {
         
         slider.doAfterEndDecelerating { [weak self] in
             self?.hideValue()
+            self?.model.didEndDecelerating()
         }
     }
     
     func flushSlider(to value: Int) {
-        slider.isEnabled = false
-        slider.doAfterEndScrolling { [weak self] in
-            self?.slider.isEnabled = true
-        }
         slider.flush(to: value)
     }
     
@@ -378,7 +348,7 @@ private enum Constants {
     static let lastImage: UIImage? = UIImage(systemName: "arrow.uturn.left.circle")
     static let nextImage: UIImage? = UIImage(systemName: "arrow.uturn.right.circle")
     
-    static let stepControlButtonSize: CGFloat = 30
+    static let modeTitleHeight: CGFloat = 30
     
     static let valueWidth: CGFloat = 50
     static let valueHeight: CGFloat = 30
