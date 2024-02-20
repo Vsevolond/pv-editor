@@ -18,6 +18,12 @@ final class FeedViewController: UIViewController {
     }()
     
     // MARK: - Internal Methods
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        setupGradient()
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,7 +40,6 @@ final class FeedViewController: UIViewController {
     // MARK: - Private Methods
 
     private func setup() {
-        setupGradient()
         setupCollectionView()
     }
     
@@ -48,6 +53,18 @@ final class FeedViewController: UIViewController {
         let layer = CAGradientLayer()
         layer.frame = view.bounds
         layer.colors = Constants.gradient
+        layer.startPoint = .init(x: 0.2, y: 0.2)
+        layer.endPoint = .init(x: 0.8, y: 0.8)
+        
+        let animation = CABasicAnimation(keyPath: Constants.animationName)
+        animation.fromValue = Constants.gradient
+        animation.toValue = Array(Constants.gradient.reversed())
+        animation.duration = 10.0
+        animation.repeatCount = .infinity
+        animation.autoreverses = true
+        animation.speed = 0.8
+        
+        layer.add(animation, forKey: nil)
         view.layer.addSublayer(layer)
     }
     
@@ -211,6 +228,8 @@ private enum Constants {
         UIColor.appColor(.amethyst).cgColor,
         UIColor.black.cgColor
     ]
+    
+    static let animationName: String = "colors"
     
     static let appName: String = "PVEditor"
     static let recentName: String = "Недавние"
