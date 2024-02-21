@@ -4,10 +4,19 @@ import UIKit
 
 enum FilterType: CaseIterable {
     
+    case original
     case sepia
     case blackWhite
     case vintage
     case negative
+    
+    var index: Int {
+        guard let index = FilterType.allCases.firstIndex(of: self) else {
+            return 0
+        }
+        
+        return index
+    }
 }
 
 // MARK: - Extension
@@ -15,50 +24,27 @@ enum FilterType: CaseIterable {
 extension FilterType: EditModeProtocol {
     
     var title: String {
-        guard let index = FilterType.allCases.firstIndex(of: self) else {
-            return ""
-        }
-        
         return Constants.titles[index]
     }
     
-    var image: UIImage {
-        guard
-            let index = FilterType.allCases.firstIndex(of: self),
-            let image = Constants.images[index]
-        else {
-            return .init()
-        }
-        
-        return image
-    }
+    var image: UIImage? { nil }
 }
 
 // MARK: - Constants
 
 private enum Constants {
     
+    static let originalTitle: String = "ОРИГИНАЛ"
     static let sepiaTitle: String = "СЕПИЯ"
     static let blackWhiteTitle: String = "ЧЕРНО-БЕЛЫЙ"
     static let vintageTitle: String = "ВИНТАЖ"
     static let negativeTitle: String = "НЕГАТИВ"
     
     static let titles: [String] = [
+        originalTitle,
         sepiaTitle,
         blackWhiteTitle,
         vintageTitle,
         negativeTitle
-    ]
-    
-    static let sepiaImage: UIImage? = UIImage(named: "sepia")
-    static let blackWhiteImage: UIImage? = UIImage(named: "black-white")
-    static let vintageImage: UIImage? = UIImage(named: "vintage")
-    static let negativeImage: UIImage? = UIImage(named: "negative")
-    
-    static let images: [UIImage?] = [
-        sepiaImage,
-        blackWhiteImage,
-        vintageImage,
-        negativeImage
     ]
 }

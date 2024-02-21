@@ -5,7 +5,7 @@ import UIKit
 protocol ImageEditorModelProtocol: AnyObject {
     
     func updateModeTitle(text: String)
-    func updateCollection()
+    func updateCollection(center index: Int)
     func hideSlider()
     func showSlider()
     func flushSlider(to value: Int)
@@ -24,9 +24,16 @@ final class ImageEditorModel {
     var viewController: ImageEditorModelProtocol?
     
     var modes: [EditingMode]
+    
+    var lastIndexMode: (correction: Int, filter: Int) = (0, 0)
     var currentIndexMode: Int = 0
+    
     var currentMode: EditingMode {
         modes[currentIndexMode]
+    }
+    
+    var imageWithoutFilters: CIImage {
+        imageParameters.imageWithoutFilters
     }
     
     var image: CIImage {
@@ -69,29 +76,43 @@ final class ImageEditorModel {
         
         currentIndexMode = index
         
-        if case .correction(let type) = currentMode {
+        switch currentMode {
+            
+        case .correction(let type):
             let value = imageParameters.getValue(of: type)
             
             viewController?.updateSlider(with: type.range)
             viewController?.flushSlider(to: value)
             viewController?.setValue(value: value)
+            
+        case .filter(let type):
+            imageParameters.setFilter(type: type)
+            
+        case .none:
+            return
         }
+        
         viewController?.updateModeTitle(text: currentMode.title)
     }
     
     func didChangedMode(to index: Int) { // correction or filter mode
         if index == 0 {
+            lastIndexMode.filter = currentIndexMode
             modes = CorrectionType.allCases.map { .correction($0) }
+            
             viewController?.showSlider()
+            didSelectMode(at: lastIndexMode.correction)
+            viewController?.updateCollection(center: lastIndexMode.correction)
             
         } else if index == 1 {
+            lastIndexMode.correction = currentIndexMode
             modes = FilterType.allCases.map { .filter($0) }
+            
             viewController?.hideSlider()
             viewController?.hideValue()
+            didSelectMode(at: lastIndexMode.filter)
+            viewController?.updateCollection(center: lastIndexMode.filter)
         }
-        
-        didSelectMode(at: 0)
-        viewController?.updateCollection()
     }
     
     func didChangedValue(_ value: Int) {
@@ -100,10 +121,7 @@ final class ImageEditorModel {
         case .correction(let type):
             imageParameters.setCorrection(of: type, to: value)
             
-        case .filter(let type):
-            imageParameters.setFilter(type: type)
-            
-        case .none:
+        default:
             return
         }
         viewController?.setValue(value: value)

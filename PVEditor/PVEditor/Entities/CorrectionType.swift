@@ -49,12 +49,8 @@ extension CorrectionType: EditModeProtocol {
         return Constants.titles[index]
     }
     
-    var image: UIImage {
-        guard let image = Constants.images[index] else {
-            return .init()
-        }
-        
-        return image
+    var image: UIImage? {
+        return Constants.images[index]
     }
 }
 

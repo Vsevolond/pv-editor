@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		D32771D92B7BEB3C0055317A /* ImageCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771D82B7BEB3C0055317A /* ImageCreator.swift */; };
 		D32771DB2B7BFA710055317A /* CorrectionParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771DA2B7BFA710055317A /* CorrectionParameters.swift */; };
+		D33A74E72B8540AC00FE024B /* ImageFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A74E62B8540AC00FE024B /* ImageFilters.swift */; };
 		D35F0CBF2B7F949F00910455 /* ImageMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */; };
 		D35F0CC12B80198A00910455 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */; };
 		D35F0CC32B8098E500910455 /* FeedModeCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC22B8098E500910455 /* FeedModeCollectionCell.swift */; };
@@ -41,6 +42,7 @@
 /* Begin PBXFileReference section */
 		D32771D82B7BEB3C0055317A /* ImageCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreator.swift; sourceTree = "<group>"; };
 		D32771DA2B7BFA710055317A /* CorrectionParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionParameters.swift; sourceTree = "<group>"; };
+		D33A74E62B8540AC00FE024B /* ImageFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilters.swift; sourceTree = "<group>"; };
 		D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMetalView.swift; sourceTree = "<group>"; };
 		D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		D35F0CC22B8098E500910455 /* FeedModeCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedModeCollectionCell.swift; sourceTree = "<group>"; };
@@ -172,6 +174,7 @@
 				D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */,
 				D32771D82B7BEB3C0055317A /* ImageCreator.swift */,
 				D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */,
+				D33A74E62B8540AC00FE024B /* ImageFilters.swift */,
 			);
 			path = ImageEditor;
 			sourceTree = "<group>";
@@ -291,6 +294,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3E5CCE12B6983A400FBE587 /* FilterType.swift in Sources */,
+				D33A74E72B8540AC00FE024B /* ImageFilters.swift in Sources */,
 				D3C3D9A02AF2E498008A633E /* ImageEditorViewController.swift in Sources */,
 				D39E91A32B28FD54006FA3D8 /* UIButton+Extensions.swift in Sources */,
 				D3E5CCE32B69855700FBE587 /* EditingMode.swift in Sources */,

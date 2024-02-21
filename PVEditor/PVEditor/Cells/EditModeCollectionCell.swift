@@ -6,8 +6,8 @@ final class EditModeCollectionCell: UICollectionViewCell {
     
     // MARK: - Private Properties
     
-    private let imageView: UIImageView = UIImageView()
-    private let valueLabel: UILabel = UILabel()
+    private let correctionImageView: UIImageView = UIImageView()
+    private let filterImageView: ImageMetalView = ImageMetalView()
     
     // MARK: - Initializers
     
@@ -26,13 +26,11 @@ final class EditModeCollectionCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         
-        imageView.image = nil
-        valueLabel.text = nil
+        correctionImageView.image = nil
+        filterImageView.image = nil
     }
     
-    func configure(with mode: EditingMode) {
-        valueLabel.isHidden = true
-        imageView.isHidden = false
+    func configure(with mode: EditingMode, image: CIImage) {
         
         switch mode {
             
@@ -40,7 +38,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
             setupLikeCorrection(type: type)
             
         case .filter(let type):
-            setupLikeFilter(type: type)
+            setupLikeFilter(type: type, image: image)
             
         case .none:
             return
@@ -52,40 +50,49 @@ final class EditModeCollectionCell: UICollectionViewCell {
     private func setup() {
         backgroundColor = .clear
         
-        valueLabel.frame = bounds
-        addSubview(valueLabel)
+        correctionImageView.frame = bounds
+        addSubview(correctionImageView)
         
-        imageView.frame = bounds
-        addSubview(imageView)
+        filterImageView.frame = bounds
+        addSubview(filterImageView)
     }
     
     private func setupLikeCorrection(type: CorrectionType) {
-        imageView.image = type.image
-        imageView.contentMode = .center
-        imageView.tintColor = .white
-        imageView.layer.cornerRadius = bounds.height / 2
+        filterImageView.isHidden = true
+        correctionImageView.isHidden = false
+        
+        correctionImageView.image = type.image
+        correctionImageView.contentMode = .center
+        correctionImageView.tintColor = .white
+        correctionImageView.layer.cornerRadius = bounds.height / 2
         
         if isSelected {
-            imageView.layer.borderWidth = 0
-            imageView.backgroundColor = .darkGray
+            correctionImageView.layer.borderWidth = 0
+            correctionImageView.backgroundColor = .darkGray
         } else {
-            imageView.backgroundColor = .clear
-            imageView.layer.borderWidth = 2
-            imageView.layer.borderColor = UIColor.darkGray.cgColor
+            correctionImageView.backgroundColor = .clear
+            correctionImageView.layer.borderWidth = 2
+            correctionImageView.layer.borderColor = UIColor.darkGray.cgColor
         }
     }
     
-    private func setupLikeFilter(type: FilterType) {
-        imageView.image = type.image
-        imageView.contentMode = .scaleAspectFit
-        imageView.layer.cornerRadius = 10
-        imageView.clipsToBounds = true
+    private func setupLikeFilter(type: FilterType, image: CIImage) {
+        correctionImageView.isHidden = true
+        filterImageView.isHidden = false
+        
+        let filters = ImageFilters(image: image)
+        if let filter = filters.getFilter(by: type) {
+            filterImageView.image = filter.outputImage
+        } else {
+            filterImageView.image = image
+        }
+        filterImageView.layer.cornerRadius = 10
         
         if isSelected {
-            imageView.layer.borderWidth = 3
-            imageView.layer.borderColor = UIColor.appColor(.linen).cgColor
+            filterImageView.layer.borderWidth = 2
+            filterImageView.layer.borderColor = UIColor.appColor(.linen).cgColor
         } else {
-            imageView.layer.borderWidth = 0
+            filterImageView.layer.borderWidth = 0
         }
     }
 }

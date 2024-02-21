@@ -15,6 +15,8 @@ final class ImageParameters {
     // MARK: - Internal Properties
     
     var imageUrl: URL
+    var imageWithoutFilters: CIImage
+    
     var image: CIImage {
         didSet {
             updateImage?(image)
@@ -24,7 +26,7 @@ final class ImageParameters {
     // MARK: - Private Properties
     
     private var correctionValues: [CorrectionType: Int]
-    private var filterType: FilterType? = nil
+    private var filterType: FilterType = .original
     
     private let queue = DispatchQueue(label: "imageProcessing", qos: .userInteractive)
     private let imageCreator: ImageCreator
@@ -41,6 +43,7 @@ final class ImageParameters {
         {
             self.imageUrl = imageUrl
             self.image = ciImage.oriented(forExifOrientation: Int32(uiImage.cgImagePropertyOrientation.rawValue))
+            self.imageWithoutFilters = image
 
         } else {
             throw ImageError.cannotLoad
@@ -57,13 +60,20 @@ final class ImageParameters {
         
         queue.async { [weak self] in
             guard let self else { return }
-            let newImage = imageCreator.correct(image: image, by: type, for: value)
-            image = newImage
+            let (filteredImage, newImage) = imageCreator.correct(image: imageWithoutFilters, by: (type, filterType), for: value)
+            image = filteredImage
+            imageWithoutFilters = newImage
         }
     }
     
     func setFilter(type: FilterType) {
         filterType = type
+        
+        queue.async { [weak self] in
+            guard let self else { return }
+            let newImage = imageCreator.filter(image: imageWithoutFilters, by: type)
+            image = newImage
+        }
     }
     
     func getValue(of type: CorrectionType) -> Int {
@@ -75,6 +85,6 @@ final class ImageParameters {
     }
     
     func updateFiltersImage(by type: CorrectionType) {
-        imageCreator.updateImage(image: image, by: type)
+        imageCreator.updateImage(image: imageWithoutFilters, by: type)
     }
 }

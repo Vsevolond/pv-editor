@@ -240,7 +240,7 @@ extension ImageEditorViewController: UICollectionViewDelegate, UICollectionViewD
         if mode == model.currentMode {
             cell.isSelected = true
         }
-        cell.configure(with: mode)
+        cell.configure(with: mode, image: model.imageWithoutFilters)
         
         return cell
     }
@@ -312,9 +312,9 @@ extension ImageEditorViewController: ImageEditorModelProtocol {
         modeTitle.text = text
     }
     
-    func updateCollection() {
+    func updateCollection(center index: Int) {
         modesCollectionView.reloadData()
-        modesCollectionView.scrollToItem(at: .init(row: 0, section: 0), at: .centeredHorizontally, animated: true)
+        modesCollectionView.scrollToItem(at: .init(row: index, section: 0), at: .centeredHorizontally, animated: true)
     }
 }
 

@@ -20,7 +20,6 @@ final class SlidingRuler: UIView {
     
     var isEnabled: Bool = false {
         didSet {
-            print(isEnabled)
             collectionView.isUserInteractionEnabled = isEnabled
         }
     }

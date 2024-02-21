@@ -1,55 +1,5 @@
 import UIKit
 
-// MARK: - Image Filters
-
-struct ImageFilters {
-    
-    let cbsFilter: CIFilter = .init(name: Constants.cbsFilterName)!
-    let tempFilter: CIFilter = .init(name: Constants.tempFilterName)!
-    let sharpFilter: CIFilter = .init(name: Constants.sharpFilterName)!
-    let clearFilter: CIFilter = .init(name: Constants.clearFilterName)!
-    let blurFilter: CIFilter = .init(name: Constants.blurName)!
-    
-    init(image: CIImage) {
-        setImage(image)
-    }
-    
-    func setImage(_ image: CIImage) {
-        cbsFilter.setValue(image, forKey: kCIInputImageKey)
-        tempFilter.setValue(image, forKey: kCIInputImageKey)
-        sharpFilter.setValue(image, forKey: kCIInputImageKey)
-        clearFilter.setValue(image, forKey: kCIInputImageKey)
-        blurFilter.setValue(image, forKey: kCIInputImageKey)
-    }
-    
-    func updateImage(_ image: CIImage, by type: CorrectionType) {
-        let exceptFilter = getFilter(by: type)
-        [cbsFilter, tempFilter, sharpFilter, clearFilter, blurFilter].filter { $0 != exceptFilter }.forEach { filter in
-            filter.setValue(image, forKey: kCIInputImageKey)
-        }
-    }
-    
-    func getFilter(by type: CorrectionType) -> CIFilter {
-        switch type {
-            
-        case .contrast, .brightness, .saturation:
-            return cbsFilter
-            
-        case .warmness, .coldness:
-            return tempFilter
-            
-        case .sharpness:
-            return sharpFilter
-            
-        case .clearness:
-            return clearFilter
-            
-        case .blur:
-            return blurFilter
-        }
-    }
-}
-
 // MARK: - Image Creator
 
 final class ImageCreator {
@@ -68,11 +18,15 @@ final class ImageCreator {
         filters.updateImage(image, by: type)
     }
     
-    func correct(image: CIImage, by correctionType: CorrectionType, for value: Int) -> CIImage {
-        let outputValue = correctionType.params.getValue(by: value)
+    func correct(image: CIImage,
+                 by types: (correction: CorrectionType, filter: FilterType),
+                 for value: Int
+    ) -> (filtered: CIImage, corrected: CIImage) {
+        
+        let outputValue = types.correction.params.getValue(by: value)
         let correctValue: Any = {
             
-            switch correctionType {
+            switch types.correction {
                 
             case .warmness, .coldness:
                 return CIVector(x: outputValue, y: 0)
@@ -82,28 +36,41 @@ final class ImageCreator {
             }
         }()
         
-        let filter = filters.getFilter(by: correctionType)
+        let correctionFilter = filters.getFilter(by: types.correction)
         
-        filter.setValue(correctValue, forKey: correctionType.key)
+        correctionFilter.setValue(correctValue, forKey: types.correction.key)
         
-        guard let outputImage = filter.outputImage, let inputImage = filter.value(forKey: kCIInputImageKey) as? CIImage else {
-            return .init()
+        guard let outputImage = correctionFilter.outputImage, 
+              let inputImage = correctionFilter.value(forKey: kCIInputImageKey) as? CIImage
+        else {
+            return (image, image)
         }
         
         let cropRect = inputImage.extent
         let croppedImage = outputImage.cropped(to: cropRect)
         
-        return croppedImage
+        guard let filter = filters.getFilter(by: types.filter) else {
+            return (croppedImage, croppedImage)
+        }
+        
+        filter.setValue(croppedImage, forKey: kCIInputImageKey)
+        
+        guard let outputFilteredImage = filter.outputImage else {
+            return (croppedImage, croppedImage)
+        }
+        
+        return (outputFilteredImage, croppedImage)
     }
-}
-
-// MARK: - Constants
-
-private enum Constants {
     
-    static let cbsFilterName: String = "CIColorControls"
-    static let tempFilterName: String = "CITemperatureAndTint"
-    static let sharpFilterName: String = "CISharpenLuminance"
-    static let clearFilterName: String = "CIUnsharpMask"
-    static let blurName: String = "CIBoxBlur"
+    func filter(image: CIImage, by filterType: FilterType) -> CIImage {
+        guard let filter = filters.getFilter(by: filterType) else {
+            return image
+        }
+        
+        guard let outputImage = filter.outputImage else {
+            return image
+        }
+        
+        return outputImage
+    }
 }

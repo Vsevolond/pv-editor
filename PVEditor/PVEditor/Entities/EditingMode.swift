@@ -5,7 +5,7 @@ import UIKit
 protocol EditModeProtocol {
     
     var title: String { get }
-    var image: UIImage { get }
+    var image: UIImage? { get }
 }
 
 // MARK: - Edit Mode
