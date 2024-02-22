@@ -314,7 +314,8 @@ extension ImageEditorViewController: ImageEditorModelProtocol {
     
     func updateCollection(center index: Int) {
         modesCollectionView.reloadData()
-        modesCollectionView.scrollToItem(at: .init(row: index, section: 0), at: .centeredHorizontally, animated: true)
+        modesCollectionView.layoutIfNeeded()
+        modesCollectionView.scrollToItem(at: IndexPath(row: index, section: 0), at: .centeredHorizontally, animated: true)
     }
 }
 

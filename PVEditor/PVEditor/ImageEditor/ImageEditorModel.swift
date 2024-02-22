@@ -96,23 +96,28 @@ final class ImageEditorModel {
     }
     
     func didChangedMode(to index: Int) { // correction or filter mode
+        var center: Int = 0
+        
         if index == 0 {
             lastIndexMode.filter = currentIndexMode
+            center = lastIndexMode.correction
+            
             modes = CorrectionType.allCases.map { .correction($0) }
             
             viewController?.showSlider()
-            didSelectMode(at: lastIndexMode.correction)
-            viewController?.updateCollection(center: lastIndexMode.correction)
             
         } else if index == 1 {
             lastIndexMode.correction = currentIndexMode
+            center = lastIndexMode.filter
+            
             modes = FilterType.allCases.map { .filter($0) }
             
             viewController?.hideSlider()
             viewController?.hideValue()
-            didSelectMode(at: lastIndexMode.filter)
-            viewController?.updateCollection(center: lastIndexMode.filter)
         }
+        
+        didSelectMode(at: center)
+        viewController?.updateCollection(center: center)
     }
     
     func didChangedValue(_ value: Int) {
