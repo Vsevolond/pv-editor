@@ -9,12 +9,21 @@
 /* Begin PBXBuildFile section */
 		D32771D92B7BEB3C0055317A /* ImageCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771D82B7BEB3C0055317A /* ImageCreator.swift */; };
 		D32771DB2B7BFA710055317A /* CorrectionParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32771DA2B7BFA710055317A /* CorrectionParameters.swift */; };
-		D33A74E72B8540AC00FE024B /* ImageFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A74E62B8540AC00FE024B /* ImageFilters.swift */; };
+		D33A74E72B8540AC00FE024B /* ImageFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33A74E62B8540AC00FE024B /* ImageFilter.swift */; };
 		D35F0CBF2B7F949F00910455 /* ImageMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */; };
 		D35F0CC12B80198A00910455 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */; };
 		D35F0CC32B8098E500910455 /* FeedModeCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC22B8098E500910455 /* FeedModeCollectionCell.swift */; };
 		D35F0CC52B8098FB00910455 /* FeedRecentCollectionCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC42B8098FB00910455 /* FeedRecentCollectionCell.swift */; };
 		D35F0CC72B80A81D00910455 /* FeedCollectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D35F0CC62B80A81D00910455 /* FeedCollectionHeaderView.swift */; };
+		D38B9E2B2B88B5EE00B38A99 /* GridKernel.metal in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E2A2B88B5EE00B38A99 /* GridKernel.metal */; };
+		D38B9E2D2B88B60300B38A99 /* GridFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E2C2B88B60300B38A99 /* GridFilter.swift */; };
+		D38B9E2F2B88B6B300B38A99 /* RGBChannelCompositing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E2E2B88B6B300B38A99 /* RGBChannelCompositing.swift */; };
+		D38B9E312B88B7C600B38A99 /* ChromaticAberrationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E302B88B7C600B38A99 /* ChromaticAberrationFilter.swift */; };
+		D38B9E332B88B82600B38A99 /* ColorBlurFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E322B88B82600B38A99 /* ColorBlurFilter.swift */; };
+		D38B9E352B88B95300B38A99 /* MotionBlurFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E342B88B95300B38A99 /* MotionBlurFilter.swift */; };
+		D38B9E372B88BA0800B38A99 /* ScatterFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E362B88BA0700B38A99 /* ScatterFilter.swift */; };
+		D38B9E3C2B88C51A00B38A99 /* ImageAdjustFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E3B2B88C51A00B38A99 /* ImageAdjustFilters.swift */; };
+		D38B9E3E2B88C52400B38A99 /* ImageStaticFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E3D2B88C52400B38A99 /* ImageStaticFilters.swift */; };
 		D38DF6012AE1A74900BB15EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6002AE1A74900BB15EC /* AppDelegate.swift */; };
 		D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */; };
 		D38DF60A2AE1A74900BB15EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D38DF6092AE1A74900BB15EC /* Assets.xcassets */; };
@@ -39,15 +48,55 @@
 		D3E5CCFB2B6E8CB500FBE587 /* ImageParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXBuildRule section */
+		D38B9E272B88B57D00B38A99 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.metal";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(DERIVED_FILE_DIR)/${INPUT_FILE_BASE}.air",
+			);
+			runOncePerArchitecture = 0;
+			script = "xcrun metal -c -fcikernel \"${INPUT_FILE_PATH}\" -o \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+		D38B9E282B88B5A200B38A99 /* PBXBuildRule */ = {
+			isa = PBXBuildRule;
+			compilerSpec = com.apple.compilers.proxy.script;
+			filePatterns = "*.air";
+			fileType = pattern.proxy;
+			inputFiles = (
+			);
+			isEditable = 1;
+			outputFiles = (
+				"$(METAL_LIBRARY_OUTPUT_DIR)/$(INPUT_FILE_BASE).metallib",
+			);
+			runOncePerArchitecture = 0;
+			script = "xcrun metallib -cikernel \"${INPUT_FILE_PATH}\" -o \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+		};
+/* End PBXBuildRule section */
+
 /* Begin PBXFileReference section */
 		D32771D82B7BEB3C0055317A /* ImageCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCreator.swift; sourceTree = "<group>"; };
 		D32771DA2B7BFA710055317A /* CorrectionParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CorrectionParameters.swift; sourceTree = "<group>"; };
-		D33A74E62B8540AC00FE024B /* ImageFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilters.swift; sourceTree = "<group>"; };
+		D33A74E62B8540AC00FE024B /* ImageFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFilter.swift; sourceTree = "<group>"; };
 		D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageMetalView.swift; sourceTree = "<group>"; };
 		D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
 		D35F0CC22B8098E500910455 /* FeedModeCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedModeCollectionCell.swift; sourceTree = "<group>"; };
 		D35F0CC42B8098FB00910455 /* FeedRecentCollectionCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedRecentCollectionCell.swift; sourceTree = "<group>"; };
 		D35F0CC62B80A81D00910455 /* FeedCollectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCollectionHeaderView.swift; sourceTree = "<group>"; };
+		D38B9E2A2B88B5EE00B38A99 /* GridKernel.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = GridKernel.metal; sourceTree = "<group>"; };
+		D38B9E2C2B88B60300B38A99 /* GridFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GridFilter.swift; sourceTree = "<group>"; };
+		D38B9E2E2B88B6B300B38A99 /* RGBChannelCompositing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RGBChannelCompositing.swift; sourceTree = "<group>"; };
+		D38B9E302B88B7C600B38A99 /* ChromaticAberrationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChromaticAberrationFilter.swift; sourceTree = "<group>"; };
+		D38B9E322B88B82600B38A99 /* ColorBlurFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorBlurFilter.swift; sourceTree = "<group>"; };
+		D38B9E342B88B95300B38A99 /* MotionBlurFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MotionBlurFilter.swift; sourceTree = "<group>"; };
+		D38B9E362B88BA0700B38A99 /* ScatterFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScatterFilter.swift; sourceTree = "<group>"; };
+		D38B9E3B2B88C51A00B38A99 /* ImageAdjustFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAdjustFilters.swift; sourceTree = "<group>"; };
+		D38B9E3D2B88C52400B38A99 /* ImageStaticFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStaticFilters.swift; sourceTree = "<group>"; };
 		D38DF5FD2AE1A74900BB15EC /* PVEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PVEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38DF6002AE1A74900BB15EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +144,36 @@
 				D35F0CC02B80198A00910455 /* UIImage+Extensions.swift */,
 			);
 			path = Extensions;
+			sourceTree = "<group>";
+		};
+		D38B9E262B88B55B00B38A99 /* Filters */ = {
+			isa = PBXGroup;
+			children = (
+				D38B9E292B88B5D100B38A99 /* GridFilter */,
+				D38B9E3A2B88BD3300B38A99 /* ChromaticAbberation */,
+				D38B9E362B88BA0700B38A99 /* ScatterFilter.swift */,
+				D38B9E342B88B95300B38A99 /* MotionBlurFilter.swift */,
+				D38B9E322B88B82600B38A99 /* ColorBlurFilter.swift */,
+			);
+			path = Filters;
+			sourceTree = "<group>";
+		};
+		D38B9E292B88B5D100B38A99 /* GridFilter */ = {
+			isa = PBXGroup;
+			children = (
+				D38B9E2A2B88B5EE00B38A99 /* GridKernel.metal */,
+				D38B9E2C2B88B60300B38A99 /* GridFilter.swift */,
+			);
+			path = GridFilter;
+			sourceTree = "<group>";
+		};
+		D38B9E3A2B88BD3300B38A99 /* ChromaticAbberation */ = {
+			isa = PBXGroup;
+			children = (
+				D38B9E302B88B7C600B38A99 /* ChromaticAberrationFilter.swift */,
+				D38B9E2E2B88B6B300B38A99 /* RGBChannelCompositing.swift */,
+			);
+			path = ChromaticAbberation;
 			sourceTree = "<group>";
 		};
 		D38DF5F42AE1A74900BB15EC = {
@@ -174,7 +253,9 @@
 				D3E5CCFA2B6E8CB500FBE587 /* ImageParameters.swift */,
 				D32771D82B7BEB3C0055317A /* ImageCreator.swift */,
 				D35F0CBE2B7F949F00910455 /* ImageMetalView.swift */,
-				D33A74E62B8540AC00FE024B /* ImageFilters.swift */,
+				D33A74E62B8540AC00FE024B /* ImageFilter.swift */,
+				D38B9E3B2B88C51A00B38A99 /* ImageAdjustFilters.swift */,
+				D38B9E3D2B88C52400B38A99 /* ImageStaticFilters.swift */,
 			);
 			path = ImageEditor;
 			sourceTree = "<group>";
@@ -213,8 +294,9 @@
 		D3E5CCF32B6ADFD900FBE587 /* CustomComponents */ = {
 			isa = PBXGroup;
 			children = (
-				D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */,
 				D3E5CCF62B6B906600FBE587 /* CenteredFlowLayout.swift */,
+				D3E5CCF42B6ADFEF00FBE587 /* SlidingRuler.swift */,
+				D38B9E262B88B55B00B38A99 /* Filters */,
 			);
 			path = CustomComponents;
 			sourceTree = "<group>";
@@ -231,6 +313,8 @@
 				D38DF5FB2AE1A74900BB15EC /* Resources */,
 			);
 			buildRules = (
+				D38B9E282B88B5A200B38A99 /* PBXBuildRule */,
+				D38B9E272B88B57D00B38A99 /* PBXBuildRule */,
 			);
 			dependencies = (
 			);
@@ -294,7 +378,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D3E5CCE12B6983A400FBE587 /* FilterType.swift in Sources */,
-				D33A74E72B8540AC00FE024B /* ImageFilters.swift in Sources */,
+				D38B9E312B88B7C600B38A99 /* ChromaticAberrationFilter.swift in Sources */,
+				D33A74E72B8540AC00FE024B /* ImageFilter.swift in Sources */,
 				D3C3D9A02AF2E498008A633E /* ImageEditorViewController.swift in Sources */,
 				D39E91A32B28FD54006FA3D8 /* UIButton+Extensions.swift in Sources */,
 				D3E5CCE32B69855700FBE587 /* EditingMode.swift in Sources */,
@@ -302,17 +387,25 @@
 				D3E5CCDF2B6982F300FBE587 /* CorrectionType.swift in Sources */,
 				D38DF6152AE1AA1300BB15EC /* FeedViewController.swift in Sources */,
 				D35F0CC72B80A81D00910455 /* FeedCollectionHeaderView.swift in Sources */,
+				D38B9E352B88B95300B38A99 /* MotionBlurFilter.swift in Sources */,
 				D39EDEC62B08C71400E0696B /* String+Extensions.swift in Sources */,
+				D38B9E372B88BA0800B38A99 /* ScatterFilter.swift in Sources */,
 				D35F0CBF2B7F949F00910455 /* ImageMetalView.swift in Sources */,
+				D38B9E2D2B88B60300B38A99 /* GridFilter.swift in Sources */,
 				D3C3D9A22AF2ED0F008A633E /* VideoEditorViewController.swift in Sources */,
+				D38B9E3E2B88C52400B38A99 /* ImageStaticFilters.swift in Sources */,
 				D35F0CC52B8098FB00910455 /* FeedRecentCollectionCell.swift in Sources */,
+				D38B9E2F2B88B6B300B38A99 /* RGBChannelCompositing.swift in Sources */,
 				D3E5CCD92B69328900FBE587 /* AppColorSet.swift in Sources */,
+				D38B9E332B88B82600B38A99 /* ColorBlurFilter.swift in Sources */,
 				D39E91B22B2900F9006FA3D8 /* FeedCellType.swift in Sources */,
 				D35F0CC32B8098E500910455 /* FeedModeCollectionCell.swift in Sources */,
 				D3E5CCD72B6931F800FBE587 /* FileManager+Extensions.swift in Sources */,
 				D3E5CCF52B6ADFEF00FBE587 /* SlidingRuler.swift in Sources */,
 				D32771D92B7BEB3C0055317A /* ImageCreator.swift in Sources */,
 				D35F0CC12B80198A00910455 /* UIImage+Extensions.swift in Sources */,
+				D38B9E3C2B88C51A00B38A99 /* ImageAdjustFilters.swift in Sources */,
+				D38B9E2B2B88B5EE00B38A99 /* GridKernel.metal in Sources */,
 				D3E5CCE52B6A46D500FBE587 /* ImageEditorModel.swift in Sources */,
 				D3E5CCF72B6B906600FBE587 /* CenteredFlowLayout.swift in Sources */,
 				D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */,
@@ -390,7 +483,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -447,7 +540,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;

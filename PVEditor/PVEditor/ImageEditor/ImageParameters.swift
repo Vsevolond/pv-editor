@@ -60,9 +60,9 @@ final class ImageParameters {
         
         queue.async { [weak self] in
             guard let self else { return }
-            let (filteredImage, newImage) = imageCreator.correct(image: imageWithoutFilters, by: (type, filterType), for: value)
-            image = filteredImage
-            imageWithoutFilters = newImage
+            let output = imageCreator.correct(image: imageWithoutFilters, by: (type, filterType), for: value)
+            image = output.filtered
+            imageWithoutFilters = output.corrected
         }
     }
     

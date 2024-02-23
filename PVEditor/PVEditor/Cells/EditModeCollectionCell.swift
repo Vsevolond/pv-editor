@@ -49,6 +49,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
     
     private func setup() {
         backgroundColor = .clear
+        clipsToBounds = true
         
         correctionImageView.frame = bounds
         addSubview(correctionImageView)
@@ -64,15 +65,15 @@ final class EditModeCollectionCell: UICollectionViewCell {
         correctionImageView.image = type.image
         correctionImageView.contentMode = .center
         correctionImageView.tintColor = .white
-        correctionImageView.layer.cornerRadius = bounds.height / 2
+        layer.cornerRadius = bounds.height / 2
         
         if isSelected {
-            correctionImageView.layer.borderWidth = 0
+            layer.borderWidth = 0
             correctionImageView.backgroundColor = .darkGray
         } else {
             correctionImageView.backgroundColor = .clear
-            correctionImageView.layer.borderWidth = 2
-            correctionImageView.layer.borderColor = UIColor.darkGray.cgColor
+            layer.borderWidth = 2
+            layer.borderColor = UIColor.darkGray.cgColor
         }
     }
     
@@ -80,19 +81,14 @@ final class EditModeCollectionCell: UICollectionViewCell {
         correctionImageView.isHidden = true
         filterImageView.isHidden = false
         
-        let filters = ImageFilters(image: image)
-        if let filter = filters.getFilter(by: type) {
-            filterImageView.image = filter.outputImage
-        } else {
-            filterImageView.image = image
-        }
-        filterImageView.layer.cornerRadius = 10
+        filterImageView.image = ImageStaticFilters.getImage(by: type)
+        layer.cornerRadius = 10
         
         if isSelected {
-            filterImageView.layer.borderWidth = 2
-            filterImageView.layer.borderColor = UIColor.appColor(.linen).cgColor
+            layer.borderWidth = 2
+            layer.borderColor = UIColor.appColor(.linen).cgColor
         } else {
-            filterImageView.layer.borderWidth = 0
+            layer.borderWidth = 0
         }
     }
 }

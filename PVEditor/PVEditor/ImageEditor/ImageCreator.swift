@@ -4,18 +4,14 @@ import UIKit
 
 final class ImageCreator {
     
-    private let filters: ImageFilters
+    private let imageFilter: ImageFilter
     
     init(image: CIImage) {
-        filters = ImageFilters(image: image)
-    }
-    
-    func set(image: CIImage) {
-        filters.setImage(image)
+        imageFilter = ImageFilter(image: image)
     }
     
     func updateImage(image: CIImage, by type: CorrectionType) {
-        filters.updateImage(image, by: type)
+        imageFilter.updateImage(image, by: type)
     }
     
     func correct(image: CIImage,
@@ -36,7 +32,7 @@ final class ImageCreator {
             }
         }()
         
-        let correctionFilter = filters.getFilter(by: types.correction)
+        let correctionFilter = imageFilter.getFilter(by: types.correction)
         
         correctionFilter.setValue(correctValue, forKey: types.correction.key)
         
@@ -49,7 +45,7 @@ final class ImageCreator {
         let cropRect = inputImage.extent
         let croppedImage = outputImage.cropped(to: cropRect)
         
-        guard let filter = filters.getFilter(by: types.filter) else {
+        guard let filter = imageFilter.getFilter(by: types.filter) else {
             return (croppedImage, croppedImage)
         }
         
@@ -63,7 +59,7 @@ final class ImageCreator {
     }
     
     func filter(image: CIImage, by filterType: FilterType) -> CIImage {
-        guard let filter = filters.getFilter(by: filterType) else {
+        guard let filter = imageFilter.getFilter(by: filterType) else {
             return image
         }
         

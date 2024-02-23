@@ -102,8 +102,8 @@ private enum Constants {
     static let halfRange: ClosedRange<Int> = 0...100
     
     static let contrastKey: String = kCIInputContrastKey
-    static let brightnessKey: String = kCIInputBrightnessKey
-    static let saturationKey: String = kCIInputSaturationKey
+    static let brightnessKey: String = "inputEV"
+    static let saturationKey: String = "inputAmount"
     static let warmnessKey: String = "inputTargetNeutral"
     static let coldnessKey: String = "inputNeutral"
     static let sharpnessKey: String = kCIInputSharpnessKey
@@ -122,8 +122,8 @@ private enum Constants {
     ]
     
     static let contrastParams: CorrectionParameters = .init(min: 0.5, max: 1.5, default: 1)
-    static let brightnessParams: CorrectionParameters = .init(min: -0.5, max: 0.5, default: 0)
-    static let saturationParams: CorrectionParameters = .init(min: 0, max: 10, default: 1)
+    static let brightnessParams: CorrectionParameters = .init(min: -2, max: 2, default: 0)
+    static let saturationParams: CorrectionParameters = .init(min: -2, max: 2, default: 0)
     static let warmnessParams: CorrectionParameters = .init(min: 6500, max: 3000, default: 6500)
     static let coldnessParams: CorrectionParameters = .init(min: 6500, max: 3000, default: 6500)
     static let sharpnessParams: CorrectionParameters = .init(min: 0.4, max: 10, default: 0.4)

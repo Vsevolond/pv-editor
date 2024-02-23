@@ -20,7 +20,7 @@ final class FeedViewController: UIViewController {
     // MARK: - Internal Methods
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        super.viewWillAppear(animated)
         
         setupGradient()
     }

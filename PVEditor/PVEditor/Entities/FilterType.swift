@@ -9,6 +9,12 @@ enum FilterType: CaseIterable {
     case blackWhite
     case vintage
     case negative
+    case posterize
+    case grid
+    case chromaticAbberation
+    case scatter
+    case motionBlur
+    case colorBlur
     
     var index: Int {
         guard let index = FilterType.allCases.firstIndex(of: self) else {
@@ -39,12 +45,24 @@ private enum Constants {
     static let blackWhiteTitle: String = "ЧЕРНО-БЕЛЫЙ"
     static let vintageTitle: String = "ВИНТАЖ"
     static let negativeTitle: String = "НЕГАТИВ"
+    static let posterizeTitle: String = "ПОСТЕР"
+    static let gridTitle: String = "СЕТКА"
+    static let chromaticAbberationTitle: String = "ХРОМАТИЧЕСКАЯ АББЕРАЦИЯ"
+    static let scatterTitle: String = "СЫПЬ"
+    static let motionBlurTitle: String = "АКТИВНОЕ РАЗМЫТИЕ"
+    static let colorBlurTitle: String = "ЦВЕТОВОЕ РАЗМЫТИЕ"
     
     static let titles: [String] = [
         originalTitle,
         sepiaTitle,
         blackWhiteTitle,
         vintageTitle,
-        negativeTitle
+        negativeTitle,
+        posterizeTitle,
+        gridTitle,
+        chromaticAbberationTitle,
+        scatterTitle,
+        motionBlurTitle,
+        colorBlurTitle
     ]
 }
