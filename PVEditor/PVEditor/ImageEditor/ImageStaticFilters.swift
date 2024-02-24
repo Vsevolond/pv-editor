@@ -9,6 +9,7 @@ struct ImageStaticFilters {
     static let vintageFilter: CIFilter = .init(name: Constants.vintageName)!
     static let negativeFilter: CIFilter = .init(name: Constants.negativeFilterName)!
     static let posterizeFilter: CIFilter = .init(name: Constants.posterizeFilterName)!
+    static let pixellateFilter: CIFilter = .init(name: Constants.pixellateFilterName)!
     static let gridFilter: GridFilter = GridFilter()
     static let chromaticAbberationFilter: ChromaticAberrationFilter = ChromaticAberrationFilter()
     static let scatterFilter: ScatterFilter = ScatterFilter()
@@ -27,6 +28,7 @@ struct ImageStaticFilters {
         case .vintage: return vintageFilter
         case .negative: return negativeFilter
         case .posterize: return posterizeFilter
+        case .pixellate: return pixellateFilter
         case .grid: return gridFilter
         case .chromaticAbberation: return chromaticAbberationFilter
         case .scatter: return scatterFilter
@@ -36,11 +38,13 @@ struct ImageStaticFilters {
     }
     
     static func setImage(_ image: CIImage) {
-        [sepiaFilter, blackWhiteFilter, vintageFilter, negativeFilter, posterizeFilter, gridFilter, 
-         chromaticAbberationFilter, scatterFilter, motionBlurFilter, colorBlurFilter]
+        [sepiaFilter, blackWhiteFilter, vintageFilter, negativeFilter, posterizeFilter, pixellateFilter,
+         gridFilter, chromaticAbberationFilter, scatterFilter, motionBlurFilter, colorBlurFilter]
         .forEach { filter in
             filter.setValue(image, forKey: kCIInputImageKey)
         }
+        
+        pixellateFilter.setValue(16.0, forKey: "inputScale")
         
         updateImages(by: image)
     }
@@ -72,4 +76,5 @@ private enum Constants {
     static let vintageName: String = "CIPhotoEffectTransfer"
     static let negativeFilterName: String = "CIColorInvert"
     static let posterizeFilterName: String = "CIColorPosterize"
+    static let pixellateFilterName: String = "CIPixellate"
 }

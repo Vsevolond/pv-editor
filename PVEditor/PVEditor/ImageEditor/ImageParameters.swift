@@ -41,7 +41,6 @@ final class ImageParameters {
            let uiImage = UIImage(data: data),
            let ciImage = CIImage(image: uiImage)
         {
-            self.imageUrl = imageUrl
             self.image = ciImage.oriented(forExifOrientation: Int32(uiImage.cgImagePropertyOrientation.rawValue))
             self.imageWithoutFilters = image
 

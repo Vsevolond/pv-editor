@@ -1,8 +1,8 @@
 import UIKit
 
-// MARK: - Image Editor Model Protocol
+// MARK: - Video Editor Model Protocol
 
-protocol ImageEditorModelProtocol: AnyObject {
+protocol VideoEditorModelProtocol: AnyObject {
     
     func updateModeTitle(text: String)
     func updateCollection(center index: Int)
@@ -12,16 +12,15 @@ protocol ImageEditorModelProtocol: AnyObject {
     func updateSlider(with range: ClosedRange<Int>)
     func setValue(value: Int)
     func hideValue()
-    func updateImage(to image: CIImage)
 }
 
-// MARK: - Image Editor Model
+// MARK: - Video Editor Model
 
-final class ImageEditorModel {
+final class VideoEditorModel {
     
     // MARK: - Internal Properties
     
-    var viewController: ImageEditorModelProtocol?
+    var viewController: VideoEditorModelProtocol?
     
     var modes: [EditingMode]
     
@@ -32,38 +31,23 @@ final class ImageEditorModel {
         modes[currentIndexMode]
     }
     
-    var imageWithoutFilters: CIImage {
-        imageParameters.imageWithoutFilters
-    }
-    
-    var image: CIImage {
-        imageParameters.image
-    }
-    
     // MARK: - Private Properties
     
-    private var imageParameters: ImageParameters
+    private var videoParameters: VideoParameters
     
-    private var imageUrl: URL {
-        imageParameters.imageUrl
+    private var videoUrl: URL {
+        videoParameters.videoUrl
     }
     
     // MARK: - Initializers
     
-    init(imageUrl: URL) throws {
+    init(videoUrl: URL) {
         modes = CorrectionType.allCases.map { .correction($0) }
-        imageParameters = try ImageParameters(imageUrl: imageUrl)
-        
-        imageParameters.onImageChange { newImage in
-            
-            DispatchQueue.main.async { [weak self] in
-                self?.viewController?.updateImage(to: newImage)
-            }
-        }
+        videoParameters = VideoParameters(videoUrl: videoUrl)
     }
     
     deinit {
-        try? FileManager.default.removeItem(at: imageUrl)
+        try? FileManager.default.removeItem(at: videoUrl)
     }
     
     // MARK: - Internal Methods
@@ -79,14 +63,14 @@ final class ImageEditorModel {
         switch currentMode {
             
         case .correction(let type):
-            let value = imageParameters.getValue(of: type)
+            let value = videoParameters.getValue(of: type)
             
             viewController?.updateSlider(with: type.range)
             viewController?.flushSlider(to: value)
             viewController?.setValue(value: value)
             
         case .filter(let type):
-            imageParameters.setFilter(type: type)
+            videoParameters.setFilter(type: type)
             
         case .none:
             return
@@ -124,20 +108,11 @@ final class ImageEditorModel {
         switch currentMode {
             
         case .correction(let type):
-            imageParameters.setCorrection(of: type, to: value)
+            videoParameters.setCorrection(of: type, to: value)
             
         default:
             return
         }
         viewController?.setValue(value: value)
-        viewController?.updateImage(to: image)
-    }
-    
-    func didEndDecelerating() {
-        guard case .correction(let type) = currentMode else {
-            return
-        }
-
-        imageParameters.updateFiltersImage(by: type)
     }
 }

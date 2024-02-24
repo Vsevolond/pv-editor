@@ -144,33 +144,23 @@ extension FeedViewController: PHPickerViewControllerDelegate {
 
 extension FeedViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int { 2 }
+    func numberOfSections(in collectionView: UICollectionView) -> Int { 1 }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if section == 0 {
-            return FeedCellType.allCases.count
-        } else {
-            return 1
-        }
+        return FeedCellType.allCases.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if indexPath.section == 0 {
-            
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.modeCellIdentifier, 
-                                                                for: indexPath) as? FeedModeCollectionCell
-            else {
-                return .init()
-            }
-            
-            let type: FeedCellType = FeedCellType.allCases[indexPath.row]
-            cell.configure(with: type)
-            
-            return cell
-            
-        } else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: Constants.modeCellIdentifier,
+                                                            for: indexPath) as? FeedModeCollectionCell
+        else {
             return .init()
         }
+        
+        let type: FeedCellType = FeedCellType.allCases[indexPath.row]
+        cell.configure(with: type)
+        
+        return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, 
@@ -183,20 +173,14 @@ extension FeedViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return .init()
         }
         
-        let title = indexPath.section == 0 ? Constants.appName : Constants.recentName
-        headerView.setTitle(title)
+        headerView.setTitle(Constants.appName)
         
         return headerView
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        if indexPath.section == 0 {
-            let type = FeedCellType.allCases[indexPath.row]
-            openGallery(for: type)
-            
-        } else {
-            return
-        }
+        let type = FeedCellType.allCases[indexPath.row]
+        openGallery(for: type)
     }
 }
 
@@ -205,12 +189,7 @@ extension FeedViewController: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, 
                         sizeForItemAt indexPath: IndexPath) -> CGSize
     {
-        if indexPath.section == 0 {
-            return .init(width: collectionView.bounds.width - 20, height: 80)
-            
-        } else {
-            return .zero
-        }
+        return .init(width: collectionView.bounds.width - 20, height: 80)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout,
@@ -232,7 +211,6 @@ private enum Constants {
     static let animationName: String = "colors"
     
     static let appName: String = "PVEditor"
-    static let recentName: String = "Недавние"
     
     static let modeCellIdentifier: String = "FeedModeCollectionCell"
     static let headerIdentifier: String = "FeedCollectionHeaderView"

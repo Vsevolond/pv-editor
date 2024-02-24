@@ -10,6 +10,7 @@ enum FilterType: CaseIterable {
     case vintage
     case negative
     case posterize
+    case pixellate
     case grid
     case chromaticAbberation
     case scatter
@@ -46,9 +47,10 @@ private enum Constants {
     static let vintageTitle: String = "ВИНТАЖ"
     static let negativeTitle: String = "НЕГАТИВ"
     static let posterizeTitle: String = "ПОСТЕР"
+    static let pixellateTitle: String = "ПИКСЕЛИ"
     static let gridTitle: String = "СЕТКА"
     static let chromaticAbberationTitle: String = "ХРОМАТИЧЕСКАЯ АББЕРАЦИЯ"
-    static let scatterTitle: String = "СЫПЬ"
+    static let scatterTitle: String = "РЯБЬ"
     static let motionBlurTitle: String = "АКТИВНОЕ РАЗМЫТИЕ"
     static let colorBlurTitle: String = "ЦВЕТОВОЕ РАЗМЫТИЕ"
     
@@ -59,6 +61,7 @@ private enum Constants {
         vintageTitle,
         negativeTitle,
         posterizeTitle,
+        pixellateTitle,
         gridTitle,
         chromaticAbberationTitle,
         scatterTitle,

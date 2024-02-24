@@ -50,24 +50,13 @@ final class ImageEditorViewController: UIViewController {
         
     }
     
-    private var convertAction: UIAction = UIAction(title: Constants.convertTitle, image: Constants.convertImage) { _ in
-        
-    }
-    
     private var doneActions: [UIAction] {
-        [saveAction, sendAction, convertAction]
+        [saveAction, sendAction]
     }
     
     private lazy var modeChangedAction: UIAction = UIAction { _ in
         let index = self.modeSegmentedControl.selectedSegmentIndex
         self.model.didChangedMode(to: index)
-    }
-    
-    private var lastStepAction: UIAction = UIAction { _ in
-        
-    }
-    
-    private var nextStepAction: UIAction = UIAction { _ in
     }
     
     // MARK: - Initializers
@@ -327,7 +316,6 @@ private enum Constants {
     static let doneTitle: String = "Готово"
     static let saveTitle: String = "Сохранить"
     static let sendTitle: String = "Отправить"
-    static let convertTitle: String = "Преобразовать"
     
     static let saveImage: UIImage? = .init(systemName: "square.and.arrow.down")
     static let sendImage: UIImage? = .init(systemName: "paperplane")

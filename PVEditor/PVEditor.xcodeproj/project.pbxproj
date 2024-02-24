@@ -24,6 +24,9 @@
 		D38B9E372B88BA0800B38A99 /* ScatterFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E362B88BA0700B38A99 /* ScatterFilter.swift */; };
 		D38B9E3C2B88C51A00B38A99 /* ImageAdjustFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E3B2B88C51A00B38A99 /* ImageAdjustFilters.swift */; };
 		D38B9E3E2B88C52400B38A99 /* ImageStaticFilters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E3D2B88C52400B38A99 /* ImageStaticFilters.swift */; };
+		D38B9E402B88E09500B38A99 /* VideoEditorModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E3F2B88E09500B38A99 /* VideoEditorModel.swift */; };
+		D38B9E422B88E28800B38A99 /* VideoParameters.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E412B88E28800B38A99 /* VideoParameters.swift */; };
+		D38B9E462B89FD8000B38A99 /* VideoMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38B9E452B89FD8000B38A99 /* VideoMetalView.swift */; };
 		D38DF6012AE1A74900BB15EC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6002AE1A74900BB15EC /* AppDelegate.swift */; };
 		D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */; };
 		D38DF60A2AE1A74900BB15EC /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D38DF6092AE1A74900BB15EC /* Assets.xcassets */; };
@@ -97,6 +100,9 @@
 		D38B9E362B88BA0700B38A99 /* ScatterFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScatterFilter.swift; sourceTree = "<group>"; };
 		D38B9E3B2B88C51A00B38A99 /* ImageAdjustFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageAdjustFilters.swift; sourceTree = "<group>"; };
 		D38B9E3D2B88C52400B38A99 /* ImageStaticFilters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStaticFilters.swift; sourceTree = "<group>"; };
+		D38B9E3F2B88E09500B38A99 /* VideoEditorModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoEditorModel.swift; sourceTree = "<group>"; };
+		D38B9E412B88E28800B38A99 /* VideoParameters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoParameters.swift; sourceTree = "<group>"; };
+		D38B9E452B89FD8000B38A99 /* VideoMetalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoMetalView.swift; sourceTree = "<group>"; };
 		D38DF5FD2AE1A74900BB15EC /* PVEditor.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PVEditor.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D38DF6002AE1A74900BB15EC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D38DF6022AE1A74900BB15EC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -264,6 +270,9 @@
 			isa = PBXGroup;
 			children = (
 				D3C3D9A12AF2ED0F008A633E /* VideoEditorViewController.swift */,
+				D38B9E3F2B88E09500B38A99 /* VideoEditorModel.swift */,
+				D38B9E412B88E28800B38A99 /* VideoParameters.swift */,
+				D38B9E452B89FD8000B38A99 /* VideoMetalView.swift */,
 			);
 			path = VideoEditor;
 			sourceTree = "<group>";
@@ -387,6 +396,7 @@
 				D3E5CCDF2B6982F300FBE587 /* CorrectionType.swift in Sources */,
 				D38DF6152AE1AA1300BB15EC /* FeedViewController.swift in Sources */,
 				D35F0CC72B80A81D00910455 /* FeedCollectionHeaderView.swift in Sources */,
+				D38B9E402B88E09500B38A99 /* VideoEditorModel.swift in Sources */,
 				D38B9E352B88B95300B38A99 /* MotionBlurFilter.swift in Sources */,
 				D39EDEC62B08C71400E0696B /* String+Extensions.swift in Sources */,
 				D38B9E372B88BA0800B38A99 /* ScatterFilter.swift in Sources */,
@@ -411,6 +421,8 @@
 				D38DF6032AE1A74900BB15EC /* SceneDelegate.swift in Sources */,
 				D32771DB2B7BFA710055317A /* CorrectionParameters.swift in Sources */,
 				D39E91B42B2A34B0006FA3D8 /* UIColor+Extensions.swift in Sources */,
+				D38B9E422B88E28800B38A99 /* VideoParameters.swift in Sources */,
+				D38B9E462B89FD8000B38A99 /* VideoMetalView.swift in Sources */,
 				D3E5CCDC2B69723700FBE587 /* EditModeCollectionCell.swift in Sources */,
 				D3E5CCF92B6BD20000FBE587 /* SlidingRulerCollectionCell.swift in Sources */,
 				D3E5CCFB2B6E8CB500FBE587 /* ImageParameters.swift in Sources */,
