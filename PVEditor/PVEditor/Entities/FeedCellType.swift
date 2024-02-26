@@ -5,13 +5,13 @@ enum FeedCellType: CaseIterable {
     
     case video
     case photo
-    case convert
+//    case convert
     
     var title: String {
         switch self {
         case .video: return Constants.video
         case .photo: return Constants.photo
-        case .convert: return Constants.convert
+//        case .convert: return Constants.convert
         }
     }
     
@@ -19,7 +19,7 @@ enum FeedCellType: CaseIterable {
         switch self {
         case .video: return Constants.videoIcon
         case .photo: return Constants.photoIcon
-        case .convert: return Constants.convertIcon
+//        case .convert: return Constants.convertIcon
         }
     }
     
@@ -27,7 +27,7 @@ enum FeedCellType: CaseIterable {
         switch self {
         case .video: return Constants.videoBackgroundColor
         case .photo: return Constants.photoBackgroundColor
-        case .convert: return Constants.convertBackgroundColor
+//        case .convert: return Constants.convertBackgroundColor
         }
     }
     
@@ -35,7 +35,7 @@ enum FeedCellType: CaseIterable {
         switch self {
         case .video: return Constants.videoTintColor
         case .photo: return Constants.photoTintColor
-        case .convert: return Constants.convertTintColor
+//        case .convert: return Constants.convertTintColor
         }
     }
     
@@ -43,7 +43,7 @@ enum FeedCellType: CaseIterable {
         switch self {
         case .video: return .videos
         case .photo: return .images
-        case .convert: return .any(of: [.videos, .images])
+//        case .convert: return .any(of: [.videos, .images])
         }
     }
 }
