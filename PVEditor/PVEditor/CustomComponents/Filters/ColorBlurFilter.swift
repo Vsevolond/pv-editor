@@ -6,7 +6,6 @@ final class ColorBlurFilter: CIFilter {
     
     var inputImage: CIImage?
     var inputThreshold: CGFloat = 0.5
-    var inputIterations: Int = 4
     var inputRadius: CGFloat = 15
     
     static var kernel: CIKernel = { () -> CIKernel in
@@ -19,22 +18,13 @@ final class ColorBlurFilter: CIFilter {
     }()
     
     override var outputImage: CIImage? {
-        guard let inputImage, let accumulator = CIImageAccumulator(extent: inputImage.extent, format: CIFormat.ARGB8) else {
+        guard let inputImage else {
             return nil
         }
         
-        accumulator.setImage(inputImage)
-        
-        for _ in 0...inputIterations {
-            if let final = ColorBlurFilter.kernel.apply(extent: inputImage.extent, roiCallback: { (index, rect) in
-                    return rect
-            }, arguments: [accumulator.image(), inputRadius, inputThreshold]) {
-                
-                accumulator.setImage(final)
-            }
-        }
-        
-        return accumulator.image()
+        return ColorBlurFilter.kernel.apply(extent: inputImage.extent, roiCallback: { (index, rect) in
+            return rect
+        }, arguments: [inputImage, inputRadius, inputThreshold])
     }
     
     override func setValue(_ value: Any?, forKey key: String) {
