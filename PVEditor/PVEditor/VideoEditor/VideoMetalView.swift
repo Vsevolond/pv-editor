@@ -173,6 +173,8 @@ final class VideoMetalView: UIView {
     }
     
     @objc private func displayLinkUpdated(link: CADisplayLink) {
+        guard isPlaying else { return }
+        
         let time = output.itemTime(forHostTime: CACurrentMediaTime())
         guard output.hasNewPixelBuffer(forItemTime: time),
               let pixbuf = output.copyPixelBuffer(forItemTime: time, itemTimeForDisplay: nil) else { return }
