@@ -4,10 +4,10 @@ import UIKit
 
 final class ImageCreator {
     
-    private let imageFilter: ImageFilter
+    private let imageFilter: ImageFilter = ImageFilter()
     
     init(image: CIImage) {
-        imageFilter = ImageFilter(image: image)
+        imageFilter.setImage(image)
     }
     
     func updateImage(image: CIImage, by type: CorrectionType) {

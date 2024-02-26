@@ -69,11 +69,6 @@ final class ImageEditorModel {
     // MARK: - Internal Methods
     
     func didSelectMode(at index: Int) { // for correction and filter modes
-        guard currentIndexMode != index else {
-            viewController?.hideValue()
-            return
-        }
-        
         currentIndexMode = index
         
         switch currentMode {

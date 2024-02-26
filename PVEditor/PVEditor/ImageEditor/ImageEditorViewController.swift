@@ -229,7 +229,7 @@ extension ImageEditorViewController: UICollectionViewDelegate, UICollectionViewD
         if mode == model.currentMode {
             cell.isSelected = true
         }
-        cell.configure(with: mode, image: model.imageWithoutFilters)
+        cell.configure(with: mode)
         
         return cell
     }

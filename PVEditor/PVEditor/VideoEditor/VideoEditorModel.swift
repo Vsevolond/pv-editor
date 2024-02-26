@@ -12,6 +12,7 @@ protocol VideoEditorModelProtocol: AnyObject {
     func updateSlider(with range: ClosedRange<Int>)
     func setValue(value: Int)
     func hideValue()
+    func updateFilter(filter: CIFilter?)
 }
 
 // MARK: - Video Editor Model
@@ -44,6 +45,10 @@ final class VideoEditorModel {
     init(videoUrl: URL) {
         modes = CorrectionType.allCases.map { .correction($0) }
         videoParameters = VideoParameters(videoUrl: videoUrl)
+        
+        videoParameters.onUpdateFilter { filter in
+            self.viewController?.updateFilter(filter: filter)
+        }
     }
     
     deinit {
@@ -53,11 +58,6 @@ final class VideoEditorModel {
     // MARK: - Internal Methods
     
     func didSelectMode(at index: Int) { // for correction and filter modes
-        guard currentIndexMode != index else {
-            viewController?.hideValue()
-            return
-        }
-        
         currentIndexMode = index
         
         switch currentMode {
@@ -114,5 +114,9 @@ final class VideoEditorModel {
             return
         }
         viewController?.setValue(value: value)
+    }
+    
+    func updateCurrentSnapshot(_ snapshot: CIImage) {
+        videoParameters.updateFiltersImage(image: snapshot)
     }
 }

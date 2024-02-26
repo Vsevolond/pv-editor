@@ -14,6 +14,10 @@ final class VideoParameters {
     private var correctionValues: [CorrectionType: Int]
     private var filterType: FilterType = .original
     
+    private let filter: ImageFilter = ImageFilter()
+    
+    private var updateFilter: ((CIFilter?) -> Void)?
+    
     // MARK: - Initializers
     
     init(videoUrl: URL) {
@@ -29,9 +33,19 @@ final class VideoParameters {
     
     func setFilter(type: FilterType) {
         filterType = type
+        let ciFilter = filter.getFilter(by: type)
+        updateFilter?(ciFilter)
     }
     
     func getValue(of type: CorrectionType) -> Int {
         correctionValues[type] ?? 0
+    }
+    
+    func onUpdateFilter(_ handler: @escaping (CIFilter?) -> Void) {
+        updateFilter = handler
+    }
+    
+    func updateFiltersImage(image: CIImage) {
+        filter.setImage(image)
     }
 }

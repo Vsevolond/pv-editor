@@ -4,11 +4,7 @@ import UIKit
 
 final class ImageFilter {
     
-    init(image: CIImage) {
-        setImage(image)
-    }
-    
-    private func setImage(_ image: CIImage) {
+    func setImage(_ image: CIImage) {
         ImageAdjustFilters.setImage(image)
         ImageStaticFilters.setImage(image)
     }
@@ -21,8 +17,6 @@ final class ImageFilter {
     func getFilter(by type: CorrectionType) -> CIFilter { ImageAdjustFilters.getFilter(by: type) }
     
     func getFilter(by type: FilterType) -> CIFilter? { ImageStaticFilters.getFilter(by: type) }
-    
-    
 }
 
 

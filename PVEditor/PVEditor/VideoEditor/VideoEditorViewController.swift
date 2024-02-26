@@ -193,6 +193,10 @@ final class VideoEditorViewController: UIViewController {
             let currentTime = CMTimeGetSeconds(time)
             playerSlider.value = Float(currentTime / duration)
         }
+        
+        videoView.onSnapshotUpdated { [weak self] image in
+            self?.updateCurrentSnapshot(image)
+        }
     }
     
     private func configurePlayerSlider() {
@@ -228,6 +232,10 @@ final class VideoEditorViewController: UIViewController {
         modeSegmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.black], for: .selected)
         modeSegmentedControl.selectedSegmentTintColor = .appColor(.tropicalIndigo)
         modeSegmentedControl.addAction(modeChangedAction, for: .valueChanged)
+    }
+    
+    private func updateCurrentSnapshot(_ snapshot: CIImage) {
+        model.updateCurrentSnapshot(snapshot)
     }
     
     @objc private func playerSliderValueChanged() {
@@ -278,7 +286,7 @@ extension VideoEditorViewController: UICollectionViewDelegate, UICollectionViewD
         if mode == model.currentMode {
             cell.isSelected = true
         }
-        cell.configure(with: mode, image: .init())
+        cell.configure(with: mode)
         
         return cell
     }
@@ -299,6 +307,10 @@ extension VideoEditorViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension VideoEditorViewController: VideoEditorModelProtocol {
+    
+    func updateFilter(filter: CIFilter?) {
+        videoView.setFilter(filter)
+    }
     
     func updateSlider(with range: ClosedRange<Int>) {
         slider.range = range

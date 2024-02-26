@@ -19,6 +19,13 @@ final class VideoMetalView: UIView {
         return item.duration
     }
     
+    var currentImage: CIImage = .init() {
+        didSet {
+            setFilteredImage(by: currentImage)
+            updateSnapshot?(currentImage)
+        }
+    }
+    
     // MARK: - Private Properties
     
     private let imageView: ImageMetalView = ImageMetalView()
@@ -38,11 +45,26 @@ final class VideoMetalView: UIView {
     
     private var updateTime: ((CMTime) -> Void)?
     
+    private var updateSnapshot: ((CIImage) -> Void)?
+    
+    private var currentTime: CMTime = .init(seconds: 0, preferredTimescale: .max) {
+        didSet {
+            updateTime?(currentTime)
+        }
+    }
+    
+    private var filter: CIFilter? {
+        didSet {
+            extractAndSetSnapshot(by: currentTime)
+        }
+    }
+    
     // MARK: - Initializers
     
     init(videoUrl: URL) {
         self.videoUrl = videoUrl
         super.init(frame: .zero)
+        
         setupPlayerItemObserver()
         setupTimeObserverToken()
         setupNotification()
@@ -66,7 +88,7 @@ final class VideoMetalView: UIView {
         imageView.frame = bounds
         addSubview(imageView)
         
-        extractAndShowFirstFrame()
+        extractAndSetSnapshot(by: currentTime)
     }
     
     func play() {
@@ -87,6 +109,14 @@ final class VideoMetalView: UIView {
         updateTime = handler
     }
     
+    func onSnapshotUpdated(_ handler: @escaping (CIImage) -> Void) {
+        updateSnapshot = handler
+    }
+    
+    func setFilter(_ filter: CIFilter?) {
+        self.filter = filter
+    }
+    
     // MARK: - Private Methods
     
     private func setupPlayerItemObserver() {
@@ -102,7 +132,7 @@ final class VideoMetalView: UIView {
         let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            self?.updateTime?(time)
+            self?.currentTime = time
         }
     }
     
@@ -113,17 +143,16 @@ final class VideoMetalView: UIView {
                                                object: player.currentItem)
     }
     
-    private func extractAndShowFirstFrame() {
+    private func extractAndSetSnapshot(by time: CMTime) {
         let asset = AVAsset(url: videoUrl)
         let imageGenerator = AVAssetImageGenerator(asset: asset)
         imageGenerator.appliesPreferredTrackTransform = true
         
-        let time = CMTime(seconds: 0, preferredTimescale: .max)
-        imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { [weak self] _, image, _, _, error in
+        imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { [weak self] _, image, _, _, _ in
             guard let self, let cgImage = image else { return }
-            DispatchQueue.main.async {
-                self.imageView.image = CIImage(cgImage: cgImage)
-            }
+            let ciImage = CIImage(cgImage: cgImage)
+            
+            self.currentImage = ciImage
         }
     }
     
@@ -132,16 +161,24 @@ final class VideoMetalView: UIView {
         displayLink?.add(to: .main, forMode: .common)
     }
     
+    private func setFilteredImage(by image: CIImage) {
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            
+            filter?.setValue(image, forKey: kCIInputImageKey)
+            let outputImage = filter?.outputImage
+            
+            imageView.image = outputImage ?? image
+        }
+    }
+    
     @objc private func displayLinkUpdated(link: CADisplayLink) {
-        
         let time = output.itemTime(forHostTime: CACurrentMediaTime())
         guard output.hasNewPixelBuffer(forItemTime: time),
               let pixbuf = output.copyPixelBuffer(forItemTime: time, itemTimeForDisplay: nil) else { return }
         
-        let baseImg = CIImage(cvImageBuffer: pixbuf)
-//        let blurImg = baseImg.clampedToExtent().applyingGaussianBlur(sigma: blurRadius).cropped(to: baseImg.extent)
-        
-        imageView.image = baseImg
+        let baseImage = CIImage(cvImageBuffer: pixbuf)
+        currentImage = baseImage
     }
     
     @objc private func videoDidEnd() {

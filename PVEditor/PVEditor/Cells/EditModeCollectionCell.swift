@@ -30,7 +30,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
         filterImageView.image = nil
     }
     
-    func configure(with mode: EditingMode, image: CIImage) {
+    func configure(with mode: EditingMode) {
         
         switch mode {
             
@@ -38,7 +38,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
             setupLikeCorrection(type: type)
             
         case .filter(let type):
-            setupLikeFilter(type: type, image: image)
+            setupLikeFilter(type: type)
             
         case .none:
             return
@@ -77,7 +77,7 @@ final class EditModeCollectionCell: UICollectionViewCell {
         }
     }
     
-    private func setupLikeFilter(type: FilterType, image: CIImage) {
+    private func setupLikeFilter(type: FilterType) {
         correctionImageView.isHidden = true
         filterImageView.isHidden = false
         
