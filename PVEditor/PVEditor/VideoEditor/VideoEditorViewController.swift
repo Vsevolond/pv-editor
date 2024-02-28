@@ -65,8 +65,6 @@ final class VideoEditorViewController: UIViewController {
     
     init(videoUrl: URL) {
         self.model = VideoEditorModel(videoUrl: videoUrl)
-//        self.player = AVPlayer(url: videoUrl)
-//        self.playerLayer = AVPlayerLayer(player: player)
         self.videoView = VideoMetalView(videoUrl: videoUrl)
         super.init(nibName: nil, bundle: nil)
     }
@@ -121,7 +119,8 @@ final class VideoEditorViewController: UIViewController {
         videoView.frame = .init(x: 0, y: modeTitle.frame.maxY + Constants.padding, width: view.bounds.width, height: view.bounds.width * 4/3)
         view.addSubview(videoView)
         
-        playerSlider.frame = .init(x: 0, y: videoView.frame.maxY, width: videoView.frame.width, height: 10)
+        playerSlider.frame = .init(x: Constants.padding, y: videoView.frame.maxY,
+                                   width: videoView.frame.width - Constants.padding * 2, height: 10)
         view.addSubview(playerSlider)
         
         valueLabel.frame.size = .init(width: Constants.valueWidth, height: Constants.valueHeight)

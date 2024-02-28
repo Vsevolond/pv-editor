@@ -200,7 +200,7 @@ final class VideoMetalView: UIView {
               let pixbuf = output.copyPixelBuffer(forItemTime: time, itemTimeForDisplay: nil) else { return }
         
         let baseImage = CIImage(cvImageBuffer: pixbuf)
-        currentImage = baseImage.transformed(by: videoTransform)
+        currentImage = baseImage.transformed(by: videoTransform) // .oriented(.down)
         setFilteredImage(by: currentImage)
     }
     
