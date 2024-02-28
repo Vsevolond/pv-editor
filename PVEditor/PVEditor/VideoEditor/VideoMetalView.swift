@@ -19,12 +19,7 @@ final class VideoMetalView: UIView {
         return item.duration
     }
     
-    var currentImage: CIImage = .init() {
-        didSet {
-            setFilteredImage(by: currentImage)
-            updateSnapshot?(currentImage)
-        }
-    }
+    var currentImage: CIImage = .init()
     
     // MARK: - Private Properties
     
@@ -43,6 +38,8 @@ final class VideoMetalView: UIView {
     private var playerItemObserver: NSKeyValueObservation?
     private var timeObserverToken: Any?
     
+    private var videoTransform: CGAffineTransform = .identity
+    
     private var updateTime: ((CMTime) -> Void)?
     
     private var updateSnapshot: ((CIImage) -> Void)?
@@ -53,9 +50,15 @@ final class VideoMetalView: UIView {
         }
     }
     
+    private var correctionFilter: CIFilter? {
+        didSet {
+            setFilteredImage(by: currentImage)
+        }
+    }
+    
     private var filter: CIFilter? {
         didSet {
-            extractAndSetSnapshot(by: currentTime)
+            setFilteredImage(by: currentImage)
         }
     }
     
@@ -65,6 +68,7 @@ final class VideoMetalView: UIView {
         self.videoUrl = videoUrl
         super.init(frame: .zero)
         
+        setupOrientation()
         setupPlayerItemObserver()
         setupTimeObserverToken()
         setupNotification()
@@ -97,11 +101,11 @@ final class VideoMetalView: UIView {
     
     func pause() {
         player.pause()
+        updateSnapshot?(currentImage)
     }
     
     func seek(to time: CMTime) {
-        isEnded = false
-        player.pause()
+        isEnded = (time == duration)
         player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
     }
     
@@ -114,7 +118,12 @@ final class VideoMetalView: UIView {
     }
     
     func setFilter(_ filter: CIFilter?) {
-        self.filter = filter
+        if let correctionFilter = filter as? CompositeFilter {
+            self.correctionFilter = correctionFilter
+            
+        } else {
+            self.filter = filter
+        }
     }
     
     // MARK: - Private Methods
@@ -129,7 +138,7 @@ final class VideoMetalView: UIView {
     }
     
     private func setupTimeObserverToken() {
-        let interval = CMTime(seconds: 0.01, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        let interval = CMTime(seconds: 0.01, preferredTimescale: .max)
         
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
             self?.currentTime = time
@@ -143,16 +152,30 @@ final class VideoMetalView: UIView {
                                                object: player.currentItem)
     }
     
+    private func setupOrientation() {
+        let asset = AVAsset(url: videoUrl)
+        guard let track = asset.tracks(withMediaType: .video).first else {
+            return
+        }
+        
+        self.videoTransform = track.preferredTransform
+    }
+    
     private func extractAndSetSnapshot(by time: CMTime) {
         let asset = AVAsset(url: videoUrl)
         let imageGenerator = AVAssetImageGenerator(asset: asset)
         imageGenerator.appliesPreferredTrackTransform = true
         
         imageGenerator.generateCGImagesAsynchronously(forTimes: [NSValue(time: time)]) { [weak self] _, image, _, _, _ in
-            guard let self, let cgImage = image else { return }
-            let ciImage = CIImage(cgImage: cgImage)
+            guard let self, let image else { return }
+            let ciImage = CIImage(cgImage: image)
+            
+            DispatchQueue.main.async {
+                self.setFilteredImage(by: ciImage)
+            }
             
             self.currentImage = ciImage
+            updateSnapshot?(ciImage)
         }
     }
     
@@ -162,28 +185,27 @@ final class VideoMetalView: UIView {
     }
     
     private func setFilteredImage(by image: CIImage) {
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            
-            filter?.setValue(image, forKey: kCIInputImageKey)
-            let outputImage = filter?.outputImage
-            
-            imageView.image = outputImage ?? image
-        }
+        correctionFilter?.setValue(image, forKey: kCIInputImageKey)
+        let outputCorrectedImage = correctionFilter?.outputImage?.cropped(to: image.extent) ?? image
+        
+        filter?.setValue(outputCorrectedImage, forKey: kCIInputImageKey)
+        let outputImage = filter?.outputImage?.cropped(to: outputCorrectedImage.extent) ?? outputCorrectedImage
+        
+        imageView.image = outputImage
     }
     
     @objc private func displayLinkUpdated(link: CADisplayLink) {
-        guard isPlaying else { return }
-        
         let time = output.itemTime(forHostTime: CACurrentMediaTime())
         guard output.hasNewPixelBuffer(forItemTime: time),
               let pixbuf = output.copyPixelBuffer(forItemTime: time, itemTimeForDisplay: nil) else { return }
         
         let baseImage = CIImage(cvImageBuffer: pixbuf)
-        currentImage = baseImage
+        currentImage = baseImage.transformed(by: videoTransform)
+        setFilteredImage(by: currentImage)
     }
     
     @objc private func videoDidEnd() {
         isEnded = true
+        updateSnapshot?(currentImage)
     }
 }

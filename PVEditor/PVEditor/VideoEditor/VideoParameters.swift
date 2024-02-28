@@ -16,6 +16,8 @@ final class VideoParameters {
     
     private let filter: ImageFilter = ImageFilter()
     
+    private var compositeFilter: CompositeFilter = CompositeFilter()
+    
     private var updateFilter: ((CIFilter?) -> Void)?
     
     // MARK: - Initializers
@@ -23,12 +25,28 @@ final class VideoParameters {
     init(videoUrl: URL) {
         self.videoUrl = videoUrl
         self.correctionValues = CorrectionType.allCases.reduce(into: [CorrectionType: Int]()) { $0[$1] = 0 }
+        
+        setupCompositeFilter()
     }
     
     // MARK: - Internal Properties
     
     func setCorrection(of type: CorrectionType, to value: Int) {
         correctionValues[type] = value
+        let outputValue = type.params.getValue(by: value)
+        let correctValue: Any = {
+            
+            switch type {
+                
+            case .warmness, .coldness:
+                return CIVector(x: outputValue, y: 0)
+                
+            default:
+                return outputValue
+            }
+        }()
+        compositeFilter.setValue(correctValue, forType: type)
+        updateFilter?(compositeFilter)
     }
     
     func setFilter(type: FilterType) {
@@ -47,5 +65,13 @@ final class VideoParameters {
     
     func updateFiltersImage(image: CIImage) {
         filter.setImage(image)
+    }
+    
+    private func setupCompositeFilter() {
+        let filters = CorrectionType.allCases.map { (filter: ImageAdjustFilters.getFilter(by: $0), type: $0) }
+        filters.forEach { ciFilter in
+            compositeFilter.compose(with: ciFilter.filter, type: ciFilter.type)
+        }
+        compositeFilter.setDefaults()
     }
 }

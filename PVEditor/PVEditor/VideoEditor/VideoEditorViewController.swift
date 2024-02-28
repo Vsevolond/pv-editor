@@ -249,16 +249,36 @@ final class VideoEditorViewController: UIViewController {
         if videoView.isPlaying || videoView.isEnded {
             videoView.pause()
             
-            playerSlider.alpha = 1
             playerSlider.isHidden = false
+            modesCollectionView.isHidden = false
+            slider.isHidden = false
+            modeTitle.isHidden = false
+            modeSegmentedControl.isHidden = false
+            
+            UIView.animate(withDuration: 0.3) { [weak self] in
+                self?.playerSlider.alpha = 1
+                self?.modesCollectionView.alpha = 1
+                self?.slider.alpha = 1
+                self?.modeTitle.alpha = 1
+                self?.modeSegmentedControl.alpha = 1
+            }
 
         } else {
             videoView.play()
             
             UIView.animate(withDuration: 0.3) { [weak self] in
                 self?.playerSlider.alpha = 0
+                self?.modesCollectionView.alpha = 0
+                self?.slider.alpha = 0
+                self?.modeTitle.alpha = 0
+                self?.modeSegmentedControl.alpha = 0
+                
             } completion: { [weak self] _ in
                 self?.playerSlider.isHidden = true
+                self?.modesCollectionView.isHidden = true
+                self?.slider.isHidden = true
+                self?.modeTitle.isHidden = true
+                self?.modeSegmentedControl.isHidden = true
             }
         }
     }

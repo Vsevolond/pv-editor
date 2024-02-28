@@ -49,7 +49,7 @@ private enum Constants {
     static let posterizeTitle: String = "ПОСТЕР"
     static let pixellateTitle: String = "ПИКСЕЛИ"
     static let gridTitle: String = "СЕТКА"
-    static let chromaticAbberationTitle: String = "ХРОМАТИЧЕСКАЯ АББЕРАЦИЯ"
+    static let chromaticAbberationTitle: String = "ХРОМАТИЧЕСКАЯ АБЕРРАЦИЯ"
     static let scatterTitle: String = "РЯБЬ"
     static let motionBlurTitle: String = "АКТИВНОЕ РАЗМЫТИЕ"
     static let colorBlurTitle: String = "ЦВЕТОВОЕ РАЗМЫТИЕ"

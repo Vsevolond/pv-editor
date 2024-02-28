@@ -125,7 +125,6 @@ final class ImageEditorModel {
             return
         }
         viewController?.setValue(value: value)
-        viewController?.updateImage(to: image)
     }
     
     func didEndDecelerating() {
