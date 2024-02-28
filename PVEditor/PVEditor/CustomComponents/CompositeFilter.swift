@@ -33,7 +33,7 @@ final class CompositeFilter: CIFilter {
     }
     
     func compose(with filter: CIFilter, type: CorrectionType) {
-        if let first, let second {
+        if let second {
             switch second.type {
                 
             case .composite:
